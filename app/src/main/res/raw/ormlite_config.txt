@@ -1,0 +1,126 @@
+#
+# generated on 2023/07/16 01:23:35
+#
+# --table-start--
+dataClass=com.paf.piaf.Bird
+tableName=birds
+# --table-fields-start--
+# --field-start--
+fieldName=id
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=latin
+columnName=latin
+canBeNull=false
+unique=true
+# --field-end--
+# --field-start--
+fieldName=french
+columnName=french
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=imagePath
+columnName=image_path
+# --field-end--
+# --field-start--
+fieldName=audioDescriptionPath
+columnName=audio_description_path
+# --field-end--
+# --field-start--
+fieldName=sounds
+foreignCollection=true
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.paf.piaf.Sound
+tableName=sounds
+# --table-fields-start--
+# --field-start--
+fieldName=id
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=type
+columnName=type
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=path
+columnName=path
+canBeNull=false
+unique=true
+# --field-end--
+# --field-start--
+fieldName=idLevel
+columnName=id_level
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=bird
+columnName=bird
+foreign=true
+foreignAutoRefresh=true
+maxForeignAutoRefreshLevel=2
+# --field-end--
+# --field-start--
+fieldName=scores
+foreignCollection=true
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.paf.piaf.Score
+tableName=scores
+# --table-fields-start--
+# --field-start--
+fieldName=dateMillis
+columnName=date_millis
+canBeNull=false
+id=true
+# --field-end--
+# --field-start--
+fieldName=sound
+columnName=sound
+foreign=true
+foreignAutoRefresh=true
+maxForeignAutoRefreshLevel=2
+# --field-end--
+# --field-start--
+fieldName=score
+columnName=score
+canBeNull=false
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.paf.piaf.User
+tableName=user
+# --table-fields-start--
+# --field-start--
+fieldName=id
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=QCM
+columnName=qcm
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=idLevel
+columnName=id_level
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=nbQuestions
+columnName=nb_questions
+canBeNull=false
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################

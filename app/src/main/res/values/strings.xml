@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PiAF</string>
+    <string name="button_play">Jouer!</string>
+    <string name="switch_qcm">Mode QCM?</string>
+    <string name="question_qcm">Qui est cet oiseau?</string>
+    <string name="button_replay">Rejouer</string>
+    <string name="button_next">Suivant</string>
+    <string name="slider_nb_questions">Nombre de questions:</string>
+</resources>
