@@ -4,10 +4,7 @@ import static java.lang.Integer.min;
 import static java.util.Collections.shuffle;
 import static java.util.Collections.nCopies;
 
-import android.util.Log;
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -49,9 +46,11 @@ public class QuizzHelper {
         List<Bird> lBirds = hBirds.stream()
                 .collect(Collectors.toList());
         shuffle(lBirds);
-        List<Bird> selectedBirds = lBirds.subList(0,min(QCMQuizzActivity.NB_CHOICES-1,lBirds.size()-1));
+        List<Bird> selectedBirds = lBirds.subList(0,min(QCMFragment.NB_CHOICES-1,lBirds.size()-1));
         selectedBirds.add(selectedSound.getBird());
         shuffle(selectedBirds);
         return selectedBirds;
     }
+
+
 }

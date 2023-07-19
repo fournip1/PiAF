@@ -6,4 +6,6 @@
     <string name="button_replay">Rejouer</string>
     <string name="button_next">Suivant</string>
     <string name="slider_nb_questions">Nombre de questions:</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
      */
     public void playQuizz(View view) {
         // Intents are used to pass information to QCMQuizzActivity and SimpleQuizzActivity
-        Intent intentQCM = new Intent(this, QCMQuizzActivity.class);
+        Intent intentQCM = new Intent(this, QuizzActivity.class);
 
         // Fetch info about play mode, i.e. QCM.
         user.setQCM(QCMSwitch.isChecked());

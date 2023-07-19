@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,7 +70,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
 
         // here we create teh default app user
         RuntimeExceptionDao<User, Integer> userDao = getUserRuntimeDao();
-        User user = new User(true,1,10);
+        User user = new User(true, 1, 10);
         userDao.create(user);
 
         // then we populate the birds table
@@ -82,10 +83,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
                 userDao.updateRaw(strLine);
             }
             dataInputStream.close();
-            Log.i(this.getClass().getName(),"Birds insertion went right");
-        }
-        catch(Exception e) {
-            Log.e(this.getClass().getName(),"Birds insertion went wrong");
+            Log.i(this.getClass().getName(), "Birds insertion went right");
+        } catch (Exception e) {
+            Log.e(this.getClass().getName(), "Birds insertion went wrong");
             e.printStackTrace();
         }
 
@@ -99,10 +99,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
                 userDao.updateRaw(strLine);
             }
             dataInputStream.close();
-            Log.i(this.getClass().getName(),"Sounds insertion went right");
-        }
-        catch(Exception e) {
-            Log.e(this.getClass().getName(),"Sounds insertion went wrong");
+            Log.i(this.getClass().getName(), "Sounds insertion went right");
+        } catch (Exception e) {
+            Log.e(this.getClass().getName(), "Sounds insertion went wrong");
             e.printStackTrace();
         }
     }
@@ -192,23 +191,49 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
     }
 
     public boolean validateLevel() {
-        try {
-            List<Score> lastScores = scoreRuntimeDao.queryBuilder().orderBy(Score.DATE_MILLIS_FIELD_NAME, false).limit(Score.SCORES_DEPTH).query();
-            Long totalScore = lastScores.stream()
-                    .filter((s)->(s.getScore()==1))
-                    .count();
-            float percentageValidated = (float) 100*totalScore/Score.SCORES_DEPTH;
-            Log.i(DatabaseHelper.class.getName(),"Percentage validated: " + percentageValidated);
-            if (percentageValidated >= Score.VALIDATION_PERCENTAGE) {
-                return true;
-            } else {
-                return false;
-            }
-
-        } catch(SQLException e) {
-            Log.e(DatabaseHelper.class.getName(), "Error in the SQL Query to get the sounds for a given level.");
+        // try {
+        List<Score> lastScores = getLastScores(Score.SCORES_DEPTH);
+        Long totalScore = lastScores.stream()
+                .filter((s) -> (s.getScore() == 1))
+                .count();
+        float percentageValidated = (float) 100 * totalScore / Score.SCORES_DEPTH;
+        Log.i(DatabaseHelper.class.getName(), "Percentage validated: " + percentageValidated);
+        if (percentageValidated >= Score.VALIDATION_PERCENTAGE) {
+            return true;
+        } else {
             return false;
         }
+
+        // } catch(SQLException e) {
+        // Log.e(DatabaseHelper.class.getName(), "Error in the SQL Query to get the sounds for a given level.");
+        // return false;
+        // }
+    }
+
+    public List<Score> getLastScores(Long depth) {
+        List<Score> lastScores = new ArrayList<>();
+        try {
+            lastScores = getScoreRuntimeDao().queryBuilder()
+                    .orderBy(Score.DATE_MILLIS_FIELD_NAME, false)
+                    .limit(depth)
+                    .query();
+        } catch (SQLException e) {
+            Log.e(DatabaseHelper.class.getName(), "Error in the SQL Query to get the last scores.");
+        }
+        return lastScores;
+    }
+
+    public List<Sound> getSoundsByLevel(int idLevel) {
+        List<Sound> sounds = new ArrayList<>();
+        try {
+            sounds = getSoundRuntimeDao().queryBuilder()
+                    .where()
+                    .le(Sound.ID_LEVEL_FIELD_NAME, idLevel)
+                    .query();
+        } catch (SQLException e) {
+            Log.e(DatabaseHelper.class.getName(), "Error in the SQL Query to get the sounds for a given level.");
+        }
+        return sounds;
     }
 
     /**
@@ -216,7 +241,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
      */
     @Override
     public void close() {
-        super.close();
         birdDao = null;
         soundDao = null;
         scoreDao = null;
@@ -225,5 +249,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         soundRuntimeDao = null;
         scoreRuntimeDao = null;
         userRuntimeDao = null;
+        Log.i(DatabaseHelper.class.getName(),"Closing database.");
+        super.close();
     }
 }

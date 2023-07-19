@@ -12,13 +12,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.HelloAndroid"
+        android:theme="@style/Theme.PiAF"
         tools:targetApi="31">
         <activity
             android:name=".Listview"
             android:exported="false" />
         <activity
-            android:name=".QCMQuizzActivity"
+            android:name=".QuizzActivity"
             android:parentActivityName=".MainActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->

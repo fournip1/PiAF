@@ -59,4 +59,17 @@ public class Score {
     public int hashCode() {
         return Objects.hash(dateMillis);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(sound);
+        stringBuilder.append(" ");
+        if (score==1) {
+            stringBuilder.append("(ok)");
+        } else {
+            stringBuilder.append("(ko)");
+        }
+        return stringBuilder.toString();
+    }
 }
