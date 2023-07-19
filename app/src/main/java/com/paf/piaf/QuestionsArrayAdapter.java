@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -31,6 +32,18 @@ public class QuestionsArrayAdapter extends ArrayAdapter<Bird> {
         TextView secondTextView = (TextView) rowView.findViewById(R.id.secondLine);
         firstTextView.setText(currentBird.getFrench());
         secondTextView.setText(currentBird.getLatin());
+        ImageView icon = (ImageView)  rowView.findViewById(R.id.iconList);
+
+        // we get the image identifier from the resources
+        int imageResourceId = context.getResources().getIdentifier(currentBird.getImageBasePath(), "drawable", context.getPackageName());
+
+        // if the image exists, it will be our icon. If not, we live it with the standard icon
+        if (imageResourceId != 0) {
+            icon.setImageResource(imageResourceId);
+        } else {
+            icon.setImageResource(context.getResources().getIdentifier("standard_bird","drawable",context.getPackageName()));
+        }
+
         return rowView;
     }
 }

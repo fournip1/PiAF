@@ -1,6 +1,8 @@
 package com.paf.piaf;
 
 
+import android.util.Log;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.dao.ForeignCollection;
@@ -62,6 +64,15 @@ public class Bird {
         if (!(o instanceof Bird)) return false;
         Bird bird = (Bird) o;
         return id == bird.id;
+    }
+
+    public String getImageBasePath() {
+        if (imagePath==null | imagePath.equals("")) {
+            return "";
+        } else {
+            // Log.i(Bird.class.getName(),"Image path: " + imagePath);
+            return imagePath.substring(0, imagePath.lastIndexOf("."));
+        }
     }
 
     @Override
