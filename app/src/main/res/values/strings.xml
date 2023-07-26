@@ -5,7 +5,15 @@
     <string name="question_qcm">Qui est cet oiseau?</string>
     <string name="button_replay">Rejouer</string>
     <string name="button_next">Suivant</string>
-    <string name="slider_nb_questions">Nombre de questions:</string>
+    <string name="button_end">Terminer</string>
+    <string name="menu_item_settins">Réglages</string>
+    <string name="game_preferences_header">Jeu</string>
+    <string name="quizz_duration">Combien de temps avez-vous?</string>
+    <string name="qcm_mode">Jouer en mode QCM?</string>
+    <string name="qcm_mode_on">QCM activé</string>
+    <string name="qcm_mode_off">Mode libre activé.</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

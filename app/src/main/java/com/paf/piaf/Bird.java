@@ -67,7 +67,9 @@ public class Bird {
     }
 
     public String getImageBasePath() {
-        if (imagePath==null | imagePath.equals("")) {
+        if (imagePath==null) {
+            return "";
+        } else if (imagePath.equals("")) {
             return "";
         } else {
             // Log.i(Bird.class.getName(),"Image path: " + imagePath);

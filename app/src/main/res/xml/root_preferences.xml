@@ -1,0 +1,33 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/game_preferences_header">
+
+        <!--<EditTextPreference
+            app:key="signature"
+            app:title="@string/signature_title"
+            app:useSimpleSummaryProvider="true" />-->
+
+        <ListPreference
+            app:key="nb_questions"
+            app:defaultValue="10"
+            app:entries="@array/quizz_duration"
+            app:entryValues="@array/quizz_number_of_questions"
+            app:title="@string/quizz_duration"
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            app:key="qcm_mode"
+            app:title="@string/qcm_mode"
+            app:summaryOff="@string/qcm_mode_off"
+            app:summaryOn="@string/qcm_mode_on"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
+
+<!--    <PreferenceCategory app:title="@string/sync_header">
+        <SwitchPreferenceCompat
+            app:dependency="sync"
+            app:key="attachment" />
+    </PreferenceCategory>-->
+

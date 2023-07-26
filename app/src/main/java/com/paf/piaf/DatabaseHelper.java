@@ -34,11 +34,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
     private static final int DATABASE_VERSION = 1;
 
     // the DAO object we use to access the SimpleData table
+    private Dao<Level, Integer> levelDao = null;
     private Dao<Bird, Integer> birdDao = null;
     private Dao<Sound, Integer> soundDao = null;
     private Dao<Score, Long> scoreDao = null;
     private Dao<User, Integer> userDao = null;
 
+    private RuntimeExceptionDao<Level, Integer> levelRuntimeDao = null;
     private RuntimeExceptionDao<Bird, Integer> birdRuntimeDao = null;
     private RuntimeExceptionDao<Sound, Integer> soundRuntimeDao = null;
     private RuntimeExceptionDao<Score, Long> scoreRuntimeDao = null;
@@ -62,16 +64,31 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
             TableUtils.createTableIfNotExists(connectionSource, Sound.class);
             TableUtils.createTableIfNotExists(connectionSource, Score.class);
             TableUtils.createTableIfNotExists(connectionSource, User.class);
-            System.out.println("Database created.");
+            TableUtils.createTableIfNotExists(connectionSource, Level.class);
+            Log.i(DatabaseHelper.class.getName(),"Database created.");
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
             throw new RuntimeException(e);
         }
 
-        // here we create teh default app user
+        // we set the user DAO
         RuntimeExceptionDao<User, Integer> userDao = getUserRuntimeDao();
-        User user = new User(true, 1, 10);
-        userDao.create(user);
+
+        // now we populate the level table
+        try {
+            InputStream inputStream = mContext.getResources().openRawResource(R.raw.populate_levels);
+            DataInputStream dataInputStream = new DataInputStream(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(dataInputStream));
+            String strLine;
+            while ((strLine = bufferedReader.readLine()) != null) {
+                userDao.updateRaw(strLine);
+            }
+            dataInputStream.close();
+            Log.i(this.getClass().getName(), "Levels insertion went right");
+        } catch (Exception e) {
+            Log.e(this.getClass().getName(), "Levels insertion went wrong");
+            e.printStackTrace();
+        }
 
         // then we populate the birds table
         try {
@@ -104,6 +121,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
             Log.e(this.getClass().getName(), "Sounds insertion went wrong");
             e.printStackTrace();
         }
+
+        // here we create the default app user
+        Level level = getLevelRuntimeDao().queryForFirst();
+        User user = new User(true,level, 10);
+        userDao.create(user);
     }
 
     /**
@@ -128,6 +150,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
      * Returns the Database Access Object (DAO) for our classes. It will create it or just give the cached
      * value.
      */
+
+    public Dao<Level, Integer> getLevelDao() throws SQLException {
+        if (levelDao == null) {
+            levelDao = getDao(Level.class);
+        }
+        return levelDao;
+    }
+
     public Dao<Bird, Integer> getBirdDao() throws SQLException {
         if (birdDao == null) {
             birdDao = getDao(Bird.class);
@@ -161,6 +191,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
      * Returns the RuntimeExceptionDao (Database Access Object) version of a Dao for our classes. It will
      * create it or just give the cached value. RuntimeExceptionDao only through RuntimeExceptions.
      */
+
+    public RuntimeExceptionDao<Level, Integer> getLevelRuntimeDao() {
+        if (levelRuntimeDao == null) {
+            levelRuntimeDao = getRuntimeExceptionDao(Level.class);
+        }
+        return levelRuntimeDao;
+    }
 
     public RuntimeExceptionDao<Bird, Integer> getBirdRuntimeDao() {
         if (birdRuntimeDao == null) {
@@ -223,12 +260,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         return lastScores;
     }
 
-    public List<Sound> getSoundsByLevel(int idLevel) {
+    public List<Sound> getSoundsByLevel(Level level) {
+        int idLevel = level.getId();
         List<Sound> sounds = new ArrayList<>();
         try {
             sounds = getSoundRuntimeDao().queryBuilder()
                     .where()
-                    .le(Sound.ID_LEVEL_FIELD_NAME, idLevel)
+                    .le(Sound.LEVEL_FIELD_NAME, idLevel)
                     .query();
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Error in the SQL Query to get the sounds for a given level.");
@@ -241,10 +279,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
      */
     @Override
     public void close() {
+        levelDao = null;
         birdDao = null;
         soundDao = null;
         scoreDao = null;
         userDao = null;
+        levelRuntimeDao = null;
         birdRuntimeDao = null;
         soundRuntimeDao = null;
         scoreRuntimeDao = null;

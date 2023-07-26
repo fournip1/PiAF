@@ -10,10 +10,8 @@ import java.util.Objects;
 
 @DatabaseTable(tableName = "sounds")
 public class Sound {
-
-    public final static String[] LEVELS = {"initiation","débutant","intermédiaire","expert"};
     public final static String TYPE_FIELD_NAME = "type";
-    public final static String ID_LEVEL_FIELD_NAME = "id_level";
+    public final static String LEVEL_FIELD_NAME = "level";
     public final static String PATH_FIELD_NAME = "path";
     public final static String BIRD_FIELD_NAME = "bird";
 
@@ -25,8 +23,8 @@ public class Sound {
     private String type;
     @DatabaseField(unique=true,  canBeNull = false, columnName = PATH_FIELD_NAME)
     private String path;
-    @DatabaseField(canBeNull = false, columnName = ID_LEVEL_FIELD_NAME)
-    private int idLevel;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = LEVEL_FIELD_NAME)
+    private Level level;
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = BIRD_FIELD_NAME)
     private Bird bird;
 
@@ -37,12 +35,8 @@ public class Sound {
         // needed by ormlite
     }
 
-    public Sound(String type, String path, int idLevel, Bird bird) {
-        if (idLevel < LEVELS.length && idLevel>=0) {
-            this.idLevel = idLevel;
-        } else {
-            this.idLevel = 0;
-        }
+    public Sound(String type, String path, Level level, Bird bird) {
+        this.level = level;
         this.type = type;
         this.path = path;
         this.bird = bird;
@@ -62,12 +56,8 @@ public class Sound {
 
     public String getBasePath() { return path.substring(0,path.lastIndexOf("."));}
 
-    public String getLevel() {
-        return LEVELS[idLevel];
-    }
-
-    public int getIdLevel() {
-        return idLevel;
+    public Level getLevel() {
+        return level;
     }
 
     public Bird getBird() {
@@ -76,10 +66,6 @@ public class Sound {
 
     public ForeignCollection<Score> getScores() {
         return scores;
-    }
-
-    public static String[] getLevels() {
-        return LEVELS;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.paf.piaf;
 
+
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,19 +29,18 @@ public class QCMFragment extends Fragment {
     private DatabaseHelper dBHelper;
     private MediaPlayer mediaPlayer;
     private User user;
-    private int idLevel, nbQuestions, idQuestion;
+    private int nbQuestions, idQuestion;
+    private List<Level> levels;
     private List<Sound> soundsByLevel;
     private Sound selectedSound;
     private Bird selectedBird;
+    private RuntimeExceptionDao<Level, Integer> levelRunTimeDao;
     private RuntimeExceptionDao<User, Integer> userRunTimeDao;
     private RuntimeExceptionDao<Score, Long> scoreRunTimeDao;
     private QuizzHelper quizzHelper;
-    private List<Bird> selectedBirds = new ArrayList<>();
-
-    private ListView questionsList;
+    private final List<Bird> selectedBirds = new ArrayList<>();
     private ArrayAdapter<Bird> arrayAdapter;
-    private Button nextButton, replayButton;
-
+    private Button nextButton;
 
 
     public QCMFragment() {
@@ -61,21 +61,21 @@ public class QCMFragment extends Fragment {
 
         View currentView = inflater.inflate(R.layout.fragment_q_c_m, container, false);
 
-        questionsList = (ListView) currentView.findViewById(R.id.questionsList);
+        ListView questionsList = (ListView) currentView.findViewById(R.id.questionsList);
         nextButton = (Button) currentView.findViewById(R.id.nextButton);
-        replayButton = (Button) currentView.findViewById(R.id.replayButton);
+        Button replayButton = (Button) currentView.findViewById(R.id.replayButton);
 
         // the two following commands are the result of an Android FCkinG BUG concerning binding buttons with methods when using Fragments
         //
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                next(v);
+                next();
             }
         });
 
         replayButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                replay(v);
+                replay();
             }
         });
 
@@ -108,11 +108,11 @@ public class QCMFragment extends Fragment {
         }
     }
 
-    public void replay(View view) {
+    public void replay() {
         playSound(selectedSound);
     }
 
-    public void next(View view) {
+    public void next() {
         // First, we handle the previous question's' result
         if (selectedSound.getBird().equals(selectedBird)) {
             scoreRunTimeDao.create(new Score(selectedSound, 1));
@@ -124,12 +124,12 @@ public class QCMFragment extends Fragment {
         // if it is the last but one question, we change the text of the button.
         if (idQuestion == nbQuestions+1) {
             if (dBHelper.validateLevel()) {
-                int presentLevel = user.getIdLevel();
-                int nextLevel;
-                if (presentLevel < Sound.LEVELS.length - 1) {
-                    user.setIdLevel(presentLevel + 1);
+                int presentLevel = user.getLevel().getId();
+                if (presentLevel < levels.size()) {
+                    Level nextLevel = levelRunTimeDao.queryForId(presentLevel+1);
+                    user.setLevel(nextLevel);
                     userRunTimeDao.update(user);
-                    Log.i(QuizzActivity.class.getName(),"Level validated!");
+                    Log.i(QCMFragment.class.getName(),"Level validated!");
                 }
             }
             AnswersFragment answersFragment = AnswersFragment.newInstance(idQuestion-1);
@@ -157,7 +157,7 @@ public class QCMFragment extends Fragment {
         Log.i(QuizzActivity.class.getName(), "Bird 2: " + selectedBirds.get(1).toString());
         Log.i(QuizzActivity.class.getName(), "Bird 3: " + selectedBirds.get(2).toString());
         Log.i(QuizzActivity.class.getName(), "Bird 4: " + selectedBirds.get(3).toString());*/
-        Log.i(QuizzActivity.class.getName(), "Remaining sounds: " + soundsByLevel.size());
+        Log.i(QCMFragment.class.getName(), "Remaining sounds: " + soundsByLevel.size());
         idQuestion++;
         playSound(selectedSound);
     }
@@ -169,21 +169,26 @@ public class QCMFragment extends Fragment {
         https://abhiandroid.com/ui/listview
         Then, to be able to get the selected item and highlight it, need to define a listener.
         Android is such a pain in the ass! */
+        // SharedPreferences preferences = getActivity().getPreferences( 0);
 
 
         // we set-up the dbHelper
         // we prepare as well the DAO for sounds and scores
         dBHelper = new DatabaseHelper(getActivity());
+        levelRunTimeDao =dBHelper.getLevelRuntimeDao();
         userRunTimeDao = dBHelper.getUserRuntimeDao();
         scoreRunTimeDao = dBHelper.getScoreRuntimeDao();
 
+
         // we get the user and the level
-        user = userRunTimeDao.queryForAll().get(0);
-        idLevel = user.getIdLevel();
+        user = userRunTimeDao.queryForFirst();
+        levels = levelRunTimeDao.queryForAll();
+        Level presentLevel = user.getLevel();
         nbQuestions = user.getNbQuestions();
 
+        // nbQuestions =  Integer.parseInt(preferences.getString("nb_questions","10"));;
         // finally we get the sounds for the corresponding level
-        soundsByLevel = dBHelper.getSoundsByLevel(idLevel);
+        soundsByLevel = dBHelper.getSoundsByLevel(presentLevel);
         // Only for debugging purposes
         quizzHelper = new QuizzHelper(soundsByLevel);
         selectedSound = quizzHelper.getSelectedSound();
@@ -199,6 +204,9 @@ public class QCMFragment extends Fragment {
     @MainThread
     @CallSuper
     public void onDestroy() {
+        levelRunTimeDao = null;
+        userRunTimeDao = null;
+        scoreRunTimeDao = null;
         dBHelper.close();
         if (mediaPlayer != null) {
             mediaPlayer.release();

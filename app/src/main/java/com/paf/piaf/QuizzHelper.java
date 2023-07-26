@@ -24,7 +24,7 @@ public class QuizzHelper {
     private void setSelectedSound() {
         List<Integer> indices = new ArrayList<>();
         sounds.forEach((s) -> {
-            indices.addAll(nCopies(s.getIdLevel()+1,sounds.lastIndexOf(s)));
+            indices.addAll(nCopies(s.getLevel().getId(),sounds.lastIndexOf(s)));
         });
         selectedSound = sounds.get(indices.get(rand.nextInt(indices.size())));
     }
@@ -51,6 +51,4 @@ public class QuizzHelper {
         shuffle(selectedBirds);
         return selectedBirds;
     }
-
-
 }

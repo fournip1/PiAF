@@ -9,7 +9,7 @@ import java.util.Objects;
 @DatabaseTable(tableName = "user")
 public class User {
     public final static String QCM_FIELD_NAME = "qcm";
-    public final static String ID_LEVEL_FIELD_NAME = "id_level";
+    public final static String LEVEL_FIELD_NAME = "level";
     public final static String NB_QUESTIONS_FIELD_NAME = "nb_questions";
 
     @DatabaseField(generatedId = true)
@@ -17,8 +17,8 @@ public class User {
     @DatabaseField(canBeNull = false, columnName = QCM_FIELD_NAME)
     private boolean QCM;
     // this is the difficulty level
-    @DatabaseField(canBeNull = false, columnName = ID_LEVEL_FIELD_NAME)
-    private int idLevel;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = LEVEL_FIELD_NAME)
+    private Level level;
     // this is the number of questions
     @DatabaseField(canBeNull = false, columnName = NB_QUESTIONS_FIELD_NAME)
     private int nbQuestions;
@@ -28,12 +28,8 @@ public class User {
         // needed by ormlite
     }
 
-    public User(boolean QCM, int idLevel, int nbQuestions) {
-        if (idLevel < Sound.LEVELS.length && idLevel >= 0) {
-            this.idLevel = idLevel;
-        } else {
-            this.idLevel = 0;
-        }
+    public User(boolean QCM, Level level, int nbQuestions) {
+        this.level = level;
         this.QCM = QCM;
         this.nbQuestions = nbQuestions;
     }
@@ -46,12 +42,8 @@ public class User {
         this.QCM = QCM;
     }
 
-    public int getIdLevel() {
-        return idLevel;
-    }
-
-    public String getLevel() {
-        return Sound.LEVELS[idLevel];
+    public Level getLevel() {
+        return level;
     }
 
     public int getNbQuestions() {
@@ -62,7 +54,7 @@ public class User {
         this.nbQuestions = nbQuestions;
     }
 
-    public void setIdLevel(int idLevel) {
-        this.idLevel = idLevel;
+    public void setLevel(Level level) {
+        this.level = level;
     }
 }
