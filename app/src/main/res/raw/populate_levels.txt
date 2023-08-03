@@ -1,4 +1,4 @@
-INSERT INTO levels (french,image_path) VALUES ("initiation","initiation.jpg")
-INSERT INTO levels (french,image_path) VALUES ("débutant","debutant.jpg")
-INSERT INTO levels (french,image_path) VALUES ("intermédiaire","intermediaire.jpg")
-INSERT INTO levels (french,image_path) VALUES ("expert","expert.jpg")
+INSERT INTO levels (french,image_path,level_validation_image_path) VALUES ("initiation","initiation.jpg","aigrette_vole.gif")
+INSERT INTO levels (french,image_path,level_validation_image_path) VALUES ("débutant","debutant.jpg","grebes_huppes_parade.gif")
+INSERT INTO levels (french,image_path,level_validation_image_path) VALUES ("intermédiaire","intermediaire.jpg","heron_cendre_danse.gif")
+INSERT INTO levels (french,image_path,level_validation_image_path) VALUES ("expert","expert.jpg","grand_cormoran_seche.gif")

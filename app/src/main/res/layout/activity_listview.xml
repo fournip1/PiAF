@@ -3,12 +3,12 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="16dp">
+    android:padding="4dp">
 
     <ImageView
         android:id="@+id/iconList"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:contentDescription="TODO"
         android:src="@mipmap/ic_launcher"
         android:layout_gravity="center"/>
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="4dp">
 
         <TextView
             android:id="@+id/firstLine"

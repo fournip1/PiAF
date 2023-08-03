@@ -15,18 +15,33 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 public class WelcomeFragment extends Fragment {
     private DatabaseHelper dBHelper;
     private User user;
     private Level level;
+    private static final String ARG_VALIDATION_LEVEL = "isValidated";
+    private boolean validated = false;
+
 
     public WelcomeFragment() {
         // Required empty public constructor
     }
 
+    public static WelcomeFragment newInstance(boolean validated) {
+        WelcomeFragment fragment = new WelcomeFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_VALIDATION_LEVEL, validated);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
+        if (getArguments() != null) {
+            validated = getArguments().getBoolean(ARG_VALIDATION_LEVEL);
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -54,14 +69,23 @@ public class WelcomeFragment extends Fragment {
             }
         });
 
-        levelTextView.setText("Vous êtes au niveau " + level.getFrench() + ".");
 
-        int imageResourceId = getActivity().getResources().getIdentifier(level.getImageBasePath(), "drawable", getActivity().getPackageName());
-
-        if (imageResourceId != 0) {
-            icon.setImageResource(imageResourceId);
+        if (validated) {
+            int levelValidationImageResourceId = getActivity().getResources().getIdentifier(level.getLevelValidationImageBasePath(), "drawable", getActivity().getPackageName());
+            if (levelValidationImageResourceId != 0) {
+                Glide.with(this).load(levelValidationImageResourceId).into(icon);
+            } else {
+                icon.setImageResource(getActivity().getResources().getIdentifier("standard_bird","drawable",getActivity().getPackageName()));
+            }
+            levelTextView.setText(getString(R.string.level_validation) + " " + level.getFrench() + "!");
         } else {
-            icon.setImageResource(getActivity().getResources().getIdentifier("standard_bird","drawable",getActivity().getPackageName()));
+            int imageResourceId = getActivity().getResources().getIdentifier(level.getImageBasePath(), "drawable", getActivity().getPackageName());
+            if (imageResourceId != 0) {
+                icon.setImageResource(imageResourceId);
+            } else {
+                icon.setImageResource(getActivity().getResources().getIdentifier("standard_bird","drawable",getActivity().getPackageName()));
+            }
+            levelTextView.setText(getString(R.string.level_information) + " " + level.getFrench() + ".");
         }
         return currentView;
     }
@@ -76,14 +100,14 @@ public class WelcomeFragment extends Fragment {
         Log.i(MainActivity.class.getName(),"QCM before game: " + isQCM);
 
         if (isQCM) {
-            getParentFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.fragmentContainerView, QCMFragment.class,null)
-                    .commit();
+            ((MainActivity) getActivity()).playQCMQuizz();
         } else {
-            MediaPlayer mediaPlayer = MediaPlayer.create(getActivity(), R.raw.hibou_petit_duc_chant_1);
-            mediaPlayer.start(); // no need to call prepare(); create() does that for you
+            ((MainActivity) getActivity()).playFreeQuizz();
         }
+    }
+
+    public void setValidated(boolean validated) {
+        this.validated = validated;
     }
 
     @Override
@@ -91,6 +115,7 @@ public class WelcomeFragment extends Fragment {
     @CallSuper
     public void onDestroy() {
         dBHelper.close();
+        Log.i(WelcomeFragment.class.getName(),"Welcome fragment destroyed.");
         super.onDestroy();
     }
 }

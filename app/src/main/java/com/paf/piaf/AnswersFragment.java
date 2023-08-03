@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.CallSuper;
@@ -15,7 +14,6 @@ import androidx.annotation.MainThread;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,6 +22,7 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class AnswersFragment extends Fragment {
+    // This time is in milliseconds
     private static final String ARG_ANSWERS_DEPTH = "answersDepth";
 
     private int answsersDepth;
@@ -93,7 +92,7 @@ public class AnswersFragment extends Fragment {
         answersScores.addAll(dBHelper.getLastScores(Long.valueOf(answsersDepth)));
         int n = answersScores.size();
         answsersList.getItemAtPosition(0);
-        Log.i(AnswersFragment.class.getName(),"Number of sounds in answers: " + answersScores.size());
+        // Log.i(AnswersFragment.class.getName(),"Number of sounds in answers: " + answersScores.size());
     }
 
     public void playSound(Sound sound) {
@@ -117,6 +116,8 @@ public class AnswersFragment extends Fragment {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+
+        Log.i(AnswersFragment.class.getName(),"Answers fragment destroyed.");
         super.onDestroy();
     }
 }

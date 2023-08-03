@@ -15,8 +15,6 @@ import android.widget.ListView;
 import androidx.annotation.CallSuper;
 import androidx.annotation.MainThread;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 
@@ -29,18 +27,19 @@ public class QCMFragment extends Fragment {
     private DatabaseHelper dBHelper;
     private MediaPlayer mediaPlayer;
     private User user;
-    private int nbQuestions, idQuestion;
+    private Level presentLevel;
     private List<Level> levels;
+    private int nbQuestions, idQuestion;
     private List<Sound> soundsByLevel;
     private Sound selectedSound;
     private Bird selectedBird;
-    private RuntimeExceptionDao<Level, Integer> levelRunTimeDao;
     private RuntimeExceptionDao<User, Integer> userRunTimeDao;
     private RuntimeExceptionDao<Score, Long> scoreRunTimeDao;
     private QuizzHelper quizzHelper;
     private final List<Bird> selectedBirds = new ArrayList<>();
     private ArrayAdapter<Bird> arrayAdapter;
     private Button nextButton;
+    private ListView questionsList;
 
 
     public QCMFragment() {
@@ -61,7 +60,7 @@ public class QCMFragment extends Fragment {
 
         View currentView = inflater.inflate(R.layout.fragment_q_c_m, container, false);
 
-        ListView questionsList = (ListView) currentView.findViewById(R.id.questionsList);
+        questionsList = (ListView) currentView.findViewById(R.id.questionsList);
         nextButton = (Button) currentView.findViewById(R.id.nextButton);
         Button replayButton = (Button) currentView.findViewById(R.id.replayButton);
 
@@ -114,6 +113,9 @@ public class QCMFragment extends Fragment {
 
     public void next() {
         // First, we handle the previous question's' result
+        questionsList.clearChoices();
+        questionsList.requestLayout();
+        arrayAdapter.notifyDataSetChanged();
         if (selectedSound.getBird().equals(selectedBird)) {
             scoreRunTimeDao.create(new Score(selectedSound, 1));
         } else {
@@ -123,26 +125,22 @@ public class QCMFragment extends Fragment {
         // if this is the last question, we quit.
         // if it is the last but one question, we change the text of the button.
         if (idQuestion == nbQuestions+1) {
+            // we display the plain answer fragment!
             if (dBHelper.validateLevel()) {
-                int presentLevel = user.getLevel().getId();
-                if (presentLevel < levels.size()) {
-                    Level nextLevel = levelRunTimeDao.queryForId(presentLevel+1);
+                user.setLastValidationTimestamp();
+                Log.i(AnswersFragment.class.getName(),"Level validated!");
+                if (presentLevel.getId() < levels.size()) {
+                    Level nextLevel = dBHelper.getLevelRuntimeDao().queryForId(presentLevel.getId()+1);
                     user.setLevel(nextLevel);
                     userRunTimeDao.update(user);
-                    Log.i(QCMFragment.class.getName(),"Level validated!");
                 }
+                ((MainActivity) getActivity()).showFiestaWelcome(idQuestion-1);
+            } else {
+                ((MainActivity) getActivity()).showAnswers(idQuestion-1);
             }
-            AnswersFragment answersFragment = AnswersFragment.newInstance(idQuestion-1);
-
-            // we now display the new fragment.
-            FragmentManager fragmentManager = getParentFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.fragmentContainerView,answersFragment);
-            fragmentTransaction.setReorderingAllowed(true);
-            fragmentTransaction.commitNow();
             return;
         } else if (idQuestion == nbQuestions) {
-            nextButton.setText("Terminer");
+            nextButton.setText(getString(R.string.button_end));
         }
 
         // then we load a new sound and a new birds' list.
@@ -163,27 +161,17 @@ public class QCMFragment extends Fragment {
     }
 
     public void initializeQuizz() {
-        /*  linking the bird list with the questions ListView
-        To be able to do so, we have to create a dummy activity Listview
-        and to edit the xml accordingly to that explanation:
-        https://abhiandroid.com/ui/listview
-        Then, to be able to get the selected item and highlight it, need to define a listener.
-        Android is such a pain in the ass! */
-        // SharedPreferences preferences = getActivity().getPreferences( 0);
-
-
         // we set-up the dbHelper
         // we prepare as well the DAO for sounds and scores
         dBHelper = new DatabaseHelper(getActivity());
-        levelRunTimeDao =dBHelper.getLevelRuntimeDao();
         userRunTimeDao = dBHelper.getUserRuntimeDao();
         scoreRunTimeDao = dBHelper.getScoreRuntimeDao();
 
 
         // we get the user and the level
         user = userRunTimeDao.queryForFirst();
-        levels = levelRunTimeDao.queryForAll();
-        Level presentLevel = user.getLevel();
+        presentLevel = user.getLevel();
+        levels = dBHelper.getLevelRuntimeDao().queryForAll();
         nbQuestions = user.getNbQuestions();
 
         // nbQuestions =  Integer.parseInt(preferences.getString("nb_questions","10"));;
@@ -204,7 +192,6 @@ public class QCMFragment extends Fragment {
     @MainThread
     @CallSuper
     public void onDestroy() {
-        levelRunTimeDao = null;
         userRunTimeDao = null;
         scoreRunTimeDao = null;
         dBHelper.close();
@@ -212,6 +199,8 @@ public class QCMFragment extends Fragment {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+
+        Log.i(QCMFragment.class.getName(),"QCM fragment destroyed.");
         super.onDestroy();
     }
 }

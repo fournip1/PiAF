@@ -1,6 +1,14 @@
 package com.paf.piaf;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
+import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.RuntimeExceptionDao;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -10,17 +18,6 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import android.database.sqlite.SQLiteDatabase;
-import android.provider.ContactsContract;
-import android.util.Log;
-
-import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.RuntimeExceptionDao;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
 
 /**
  * Database helper class used to manage the creation and upgrading of your database. This class also usually provides
@@ -232,6 +229,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         List<Score> lastScores = getLastScores(Score.SCORES_DEPTH);
         Long totalScore = lastScores.stream()
                 .filter((s) -> (s.getScore() == 1))
+                .filter((s) -> (s.dateMillis > userRuntimeDao.queryForFirst().getLastValidationTimestamp()))
                 .count();
         float percentageValidated = (float) 100 * totalScore / Score.SCORES_DEPTH;
         Log.i(DatabaseHelper.class.getName(), "Percentage validated: " + percentageValidated);
