@@ -112,10 +112,13 @@ public class QCMFragment extends Fragment {
     }
 
     public void next() {
+        /*The following lines are due to a F..CKING bug in Android, which does not
+                deselect item when reloading the view. See the following discussion:
+        https://stackoverflow.com/questions/9754170/listview-selection-remains-persistent-after-exiting-choice-mode*/
+        questionsList.setChoiceMode(ListView.CHOICE_MODE_NONE);
+        questionsList.setAdapter(arrayAdapter);
+
         // First, we handle the previous question's' result
-        questionsList.clearChoices();
-        questionsList.requestLayout();
-        arrayAdapter.notifyDataSetChanged();
         if (selectedSound.getBird().equals(selectedBird)) {
             scoreRunTimeDao.create(new Score(selectedSound, 1));
         } else {
@@ -125,16 +128,19 @@ public class QCMFragment extends Fragment {
         // if this is the last question, we quit.
         // if it is the last but one question, we change the text of the button.
         if (idQuestion == nbQuestions+1) {
+            Level nextLevel;
             // we display the plain answer fragment!
             if (dBHelper.validateLevel()) {
                 user.setLastValidationTimestamp();
                 Log.i(AnswersFragment.class.getName(),"Level validated!");
                 if (presentLevel.getId() < levels.size()) {
-                    Level nextLevel = dBHelper.getLevelRuntimeDao().queryForId(presentLevel.getId()+1);
+                    nextLevel = dBHelper.getLevelRuntimeDao().queryForId(presentLevel.getId()+1);
                     user.setLevel(nextLevel);
                     userRunTimeDao.update(user);
+                } else {
+                    nextLevel = presentLevel;
                 }
-                ((MainActivity) getActivity()).showFiestaWelcome(idQuestion-1);
+                ((MainActivity) getActivity()).showFiestaWelcome(idQuestion-1, presentLevel);
             } else {
                 ((MainActivity) getActivity()).showAnswers(idQuestion-1);
             }

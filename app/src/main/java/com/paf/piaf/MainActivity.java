@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 .beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.fragmentContainerView, answersFragment, "Answers")
-                .addToBackStack(null)
+                .addToBackStack("WELCOME_TO_QUIZZ")
                 .commit();
     }
 
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    public void showFiestaWelcome(int answersDepth) {
+    public void showFiestaWelcome(int answersDepth, Level presentLevel) {
         // we display the welcome fragment with a fiesta image for a few seconds!
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -101,10 +101,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }, SPLASH_TIME_OUT);
         welcomeFragment.setValidated(true);
-        fragmentManager.beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(R.id.fragmentContainerView, welcomeFragment)
-                .commit();
+        welcomeFragment.setPresentLevel(presentLevel);
+        fragmentManager.popBackStack("WELCOME_TO_QUIZZ",
+                fragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     @Override
