@@ -160,17 +160,21 @@ public class FreeFragment extends Fragment {
     }
 
     public void lastQuestionRoutine() {
+        Level nextLevel;
         // we display the plain answer fragment!
         if (dBHelper.validateLevel()) {
             user.setLastValidationTimestamp();
             Log.i(AnswersFragment.class.getName(), "Level validated!");
             if (presentLevel.getId() < levels.size()) {
-                Level nextLevel = dBHelper.getLevelRuntimeDao().queryForId(presentLevel.getId() + 1);
+                nextLevel = dBHelper.getLevelRuntimeDao().queryForId(presentLevel.getId() + 1);
                 user.setLevel(nextLevel);
                 userRunTimeDao.update(user);
+            } else {
+                nextLevel = presentLevel;
             }
-            ((MainActivity) getActivity()).showFiestaWelcome(idQuestion - 1);
+            ((MainActivity) getActivity()).showFiestaWelcome(idQuestion - 1, presentLevel);
         } else {
+
             ((MainActivity) getActivity()).showAnswers(idQuestion - 1);
         }
     }

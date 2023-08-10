@@ -20,7 +20,7 @@ import com.bumptech.glide.Glide;
 public class WelcomeFragment extends Fragment {
     private DatabaseHelper dBHelper;
     private User user;
-    private Level level;
+    private Level presentLevel, nextLevel;
     private static final String ARG_VALIDATION_LEVEL = "isValidated";
     private boolean validated = false;
 
@@ -48,13 +48,12 @@ public class WelcomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View currentView = inflater.inflate(R.layout.fragment_welcome, container, false);
-
-        // We get the user and the level
         dBHelper = new DatabaseHelper(getActivity());
         user = dBHelper.getUserRuntimeDao().queryForFirst();
-        level = user.getLevel();
+        nextLevel = user.getLevel();
+
+        // Inflate the layout for this fragment
+        View currentView = inflater.inflate(R.layout.fragment_welcome, container, false);
 
         // We set a listener to the button
         // modify the text of the textview
@@ -69,25 +68,28 @@ public class WelcomeFragment extends Fragment {
             }
         });
 
-
         if (validated) {
-            int levelValidationImageResourceId = getActivity().getResources().getIdentifier(level.getLevelValidationImageBasePath(), "drawable", getActivity().getPackageName());
+            int levelValidationImageResourceId = getActivity().getResources().getIdentifier(presentLevel.getLevelValidationImageBasePath(), "drawable", getActivity().getPackageName());
             if (levelValidationImageResourceId != 0) {
                 Glide.with(this).load(levelValidationImageResourceId).into(icon);
             } else {
                 icon.setImageResource(getActivity().getResources().getIdentifier("standard_bird","drawable",getActivity().getPackageName()));
             }
-            levelTextView.setText(getString(R.string.level_validation) + " " + level.getFrench() + "!");
+            levelTextView.setText(getString(R.string.level_validation) + " " + presentLevel.getFrench() + "!");
         } else {
-            int imageResourceId = getActivity().getResources().getIdentifier(level.getImageBasePath(), "drawable", getActivity().getPackageName());
+            int imageResourceId = getActivity().getResources().getIdentifier(nextLevel.getImageBasePath(), "drawable", getActivity().getPackageName());
             if (imageResourceId != 0) {
                 icon.setImageResource(imageResourceId);
             } else {
                 icon.setImageResource(getActivity().getResources().getIdentifier("standard_bird","drawable",getActivity().getPackageName()));
             }
-            levelTextView.setText(getString(R.string.level_information) + " " + level.getFrench() + ".");
+            levelTextView.setText(getString(R.string.level_information) + " " + nextLevel.getFrench() + ".");
         }
         return currentView;
+    }
+
+    public void setPresentLevel(Level presentLevel) {
+        this.presentLevel = presentLevel;
     }
 
     public void playQuizz() {
