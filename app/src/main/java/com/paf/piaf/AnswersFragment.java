@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.MainThread;
@@ -25,9 +26,10 @@ public class AnswersFragment extends Fragment {
     // This time is in milliseconds
     private static final String ARG_ANSWERS_DEPTH = "answersDepth";
 
-    private int answsersDepth;
+    private int answersDepth;
     private DatabaseHelper dBHelper;
     private ListView answsersList;
+    private TextView scoreTextView;
     private List<Score> answersScores = new ArrayList<>();
     // private ArrayAdapter<Score> arrayAdapter;
     private AnswersArrayAdapter arrayAdapter;
@@ -57,7 +59,7 @@ public class AnswersFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            answsersDepth = getArguments().getInt(ARG_ANSWERS_DEPTH);
+            answersDepth = getArguments().getInt(ARG_ANSWERS_DEPTH);
         }
     }
 
@@ -68,6 +70,7 @@ public class AnswersFragment extends Fragment {
         View currentView = inflater.inflate(R.layout.fragment_answers, container, false);
 
         answsersList = (ListView) currentView.findViewById(R.id.answersList);
+        scoreTextView = (TextView) currentView.findViewById(R.id.scoreTextView);
 
         // arrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.activity_listview, R.id.listTextView, answersScores);
         arrayAdapter = new AnswersArrayAdapter(getActivity(),answersScores);
@@ -89,10 +92,12 @@ public class AnswersFragment extends Fragment {
         // we prepare as well the DAO for scores
         dBHelper = new DatabaseHelper(getActivity());
         answersScores.clear();
-        answersScores.addAll(dBHelper.getLastScores(Long.valueOf(answsersDepth)));
-        int n = answersScores.size();
-        answsersList.getItemAtPosition(0);
-        // Log.i(AnswersFragment.class.getName(),"Number of sounds in answers: " + answersScores.size());
+        answersScores.addAll(dBHelper.getLastScores(Long.valueOf(answersDepth)));
+        long g = answersScores.stream()
+                .filter((s) -> (s.getScore() == 1))
+                .count();
+        scoreTextView.setText(getString(R.string.score_text) + " " + String.valueOf(g) +"/" + String.valueOf(answersDepth));
+
     }
 
     public void playSound(Sound sound) {

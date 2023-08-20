@@ -183,13 +183,13 @@ public class FreeFragment extends Fragment {
         quizzHelper.setSounds(soundsByLevel);
         selectedSound = quizzHelper.getSelectedSound();
         soundsByLevel.remove(selectedSound);
-        Log.i(QCMFragment.class.getName(), "Remaining sounds: " + soundsByLevel.size());
+        Log.i(FreeFragment.class.getName(), "Remaining sounds: " + soundsByLevel.size());
         idQuestion++;
         playSound(selectedSound);
         freeQuestionTextView.setText(getString(R.string.free_question));
         yesButton.setText(R.string.button_yes);
         noButton.setText(R.string.button_no);
-        int imageResourceId = getActivity().getResources().getIdentifier("mystery_bird", "drawable", getActivity().getPackageName());
+        int imageResourceId = getActivity().getResources().getIdentifier("ic_foreground", "drawable", getActivity().getPackageName());
         if (imageResourceId != 0) {
             iconBird.setImageResource(imageResourceId);
         } else {
@@ -204,7 +204,6 @@ public class FreeFragment extends Fragment {
         dBHelper = new DatabaseHelper(getActivity());
         userRunTimeDao = dBHelper.getUserRuntimeDao();
         scoreRunTimeDao = dBHelper.getScoreRuntimeDao();
-
 
         // we get the user and the level
         user = userRunTimeDao.queryForFirst();

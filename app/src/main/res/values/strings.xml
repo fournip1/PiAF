@@ -20,4 +20,5 @@
     <string name="button_no">Aucune idée.</string>
     <string name="button_correct">Bonne réponse.</string>
     <string name="button_incorrect">Mauvaise réponse.</string>
+    <string name="score_text">Votre score:</string>
 </resources>
