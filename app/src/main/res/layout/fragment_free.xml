@@ -33,29 +33,29 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/freeQuestionTextView"
-        app:layout_constraintBottom_toTopOf="@id/yesButton"
+        app:layout_constraintBottom_toTopOf="@id/showButton"
         android:contentDescription="TODO"
         android:src="@mipmap/ic_launcher"
         android:layout_gravity="center"/>
 
     <Button
-        android:id="@+id/yesButton"
+        android:id="@+id/showButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/button_yes"
         android:layout_marginBottom="32dp"
+        android:text="@string/button_show"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/noButton" />
+        app:layout_constraintStart_toEndOf="@+id/replayButton" />
 
     <Button
-        android:id="@+id/noButton"
+        android:id="@+id/replayButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/button_no"
-        app:layout_constraintBaseline_toBaselineOf="@+id/yesButton"
-        app:layout_constraintEnd_toStartOf="@+id/yesButton"
+        android:text="@string/button_replay"
+        app:layout_constraintBaseline_toBaselineOf="@+id/showButton"
+        app:layout_constraintEnd_toStartOf="@+id/showButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 

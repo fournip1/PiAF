@@ -1,26 +1,24 @@
 package com.paf.piaf;
 
-import android.media.Image;
+import android.annotation.SuppressLint;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.MainThread;
 import androidx.fragment.app.Fragment;
 
-import android.os.Handler;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -37,9 +35,12 @@ public class FreeFragment extends Fragment {
     private RuntimeExceptionDao<User, Integer> userRunTimeDao;
     private RuntimeExceptionDao<Score, Long> scoreRunTimeDao;
     private QuizzHelper quizzHelper;
-    private Button yesButton, noButton;
+    private Button showButton, replayButton;
     private TextView freeQuestionTextView;
     private ImageView iconBird;
+    // these are used for the swipe
+    private float x1, x2;
+    public static final int MIN_DISTANCE = 150;
 
 
     public FreeFragment() {
@@ -52,41 +53,73 @@ public class FreeFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View currentView = inflater.inflate(R.layout.fragment_free, container, false);
         // Inflate the layout for this fragment
 
-        yesButton = (Button) currentView.findViewById(R.id.yesButton);
-        noButton = (Button) currentView.findViewById(R.id.noButton);
+        showButton = (Button) currentView.findViewById(R.id.showButton);
+        replayButton = (Button) currentView.findViewById(R.id.replayButton);
 
-        yesButton.setOnClickListener(new View.OnClickListener() {
+        showButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                yes();
+                showAnswer();
             }
         });
 
-        noButton.setOnClickListener(new View.OnClickListener() {
+        replayButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                no();
+                replay();
             }
         });
 
         freeQuestionTextView = (TextView) currentView.findViewById(R.id.freeQuestionTextView);
         iconBird = (ImageView) currentView.findViewById(R.id.iconBird);
 
-        iconBird.setOnClickListener(new View.OnClickListener() {
+/*        iconBird.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (v.equals(iconBird)) {
+                if (v.equals(iconBird) && !answerShown) {
                     replay();
                 }
+            }
+        });*/
+
+        // we want to detect the swipes left and right
+        iconBird.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                // this boolean is true if swipe right
+                boolean right;
+                if (answerShown) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            x1 = event.getX();
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            x2 = event.getX();
+                            float deltaX = x2 - x1;
+                            if (Math.abs(deltaX) > MIN_DISTANCE) {
+                                // Left to Right swipe action
+                                if (x2 > x1) {
+                                    right = true;
+                                    Toast.makeText(getActivity(), getString(R.string.answer_correct), Toast.LENGTH_SHORT).show();
+                                }
+                                // Right to left swipe action
+                                else {
+                                    right = false;
+                                    Toast.makeText(getActivity(), getString(R.string.answer_incorrect), Toast.LENGTH_SHORT).show();
+                                }
+                                recordAnswer(right);
+                            }
+                    }
+                }
+                return true;
             }
         });
 
         idQuestion = 1;
         initializeQuizz();
-
         return currentView;
     }
 
@@ -106,57 +139,31 @@ public class FreeFragment extends Fragment {
         playSound(selectedSound);
     }
 
-    public void yes() {
+    public void showAnswer() {
         if (!answerShown) {
             freeQuestionTextView.setText(getString(R.string.free_answer) + " " + selectedSound.getBird());
             int imageResourceId = getActivity().getResources().getIdentifier(selectedSound.getBird().getImageBasePath(), "drawable", getActivity().getPackageName());
             if (imageResourceId != 0) {
                 iconBird.setImageResource(imageResourceId);
             } else {
-                iconBird.setImageResource(getActivity().getResources().getIdentifier("standard_bird","drawable",getActivity().getPackageName()));
+                iconBird.setImageResource(getActivity().getResources().getIdentifier("standard_bird", "drawable", getActivity().getPackageName()));
             }
-            yesButton.setText(R.string.button_correct);
-            noButton.setText(R.string.button_incorrect);
             answerShown = true;
-        } else {
-            scoreRunTimeDao.create(new Score(selectedSound, 1));
-            // maybe it is the last question
-            if (idQuestion == nbQuestions + 1) {
-                lastQuestionRoutine();
-                return;
-            }
-            showNexQuestion();
         }
     }
 
-    public void no() {
-        // this is the case where the answer is shown but incorrect
-        if (answerShown) {
-            scoreRunTimeDao.create(new Score(selectedSound, -1));
-            // maybe it is the last question
-            if (idQuestion == nbQuestions + 1) {
-                lastQuestionRoutine();
-                return;
-            }
-            showNexQuestion();
+    public void recordAnswer(boolean right) {
+        if (right) {
+            scoreRunTimeDao.create(new Score(selectedSound, 1));
         } else {
-            // this is the case where the answer is not shown and the player ignores it.
-            // we want to display the answer briefly and then move to another question
             scoreRunTimeDao.create(new Score(selectedSound, 0));
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    showNexQuestion();
-                }
-            }, MainActivity.SPLASH_TIME_OUT);
-            freeQuestionTextView.setText(getString(R.string.free_answer) + " " + selectedSound.getBird());
-            int imageResourceId = getActivity().getResources().getIdentifier(selectedSound.getBird().getImageBasePath(), "drawable", getActivity().getPackageName());
-            if (imageResourceId != 0) {
-                iconBird.setImageResource(imageResourceId);
-            } else {
-                iconBird.setImageResource(getActivity().getResources().getIdentifier("standard_bird","drawable",getActivity().getPackageName()));
-            }
         }
+        // maybe it is the last question
+        if (idQuestion == nbQuestions + 1) {
+            lastQuestionRoutine();
+            return;
+        }
+        showNexQuestion();
     }
 
     public void lastQuestionRoutine() {
@@ -174,7 +181,6 @@ public class FreeFragment extends Fragment {
             }
             ((MainActivity) getActivity()).showFiestaWelcome(idQuestion - 1, presentLevel);
         } else {
-
             ((MainActivity) getActivity()).showAnswers(idQuestion - 1);
         }
     }
@@ -187,13 +193,11 @@ public class FreeFragment extends Fragment {
         idQuestion++;
         playSound(selectedSound);
         freeQuestionTextView.setText(getString(R.string.free_question));
-        yesButton.setText(R.string.button_yes);
-        noButton.setText(R.string.button_no);
         int imageResourceId = getActivity().getResources().getIdentifier("ic_foreground", "drawable", getActivity().getPackageName());
         if (imageResourceId != 0) {
             iconBird.setImageResource(imageResourceId);
         } else {
-            iconBird.setImageResource(getActivity().getResources().getIdentifier("standard_bird","drawable",getActivity().getPackageName()));
+            iconBird.setImageResource(getActivity().getResources().getIdentifier("standard_bird", "drawable", getActivity().getPackageName()));
         }
         answerShown = false;
     }

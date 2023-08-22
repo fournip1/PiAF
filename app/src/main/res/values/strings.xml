@@ -16,9 +16,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="free_question">Qui suis-je?</string>
     <string name="free_answer">Mon nom:</string>
-    <string name="button_yes">Je te connais.</string>
-    <string name="button_no">Aucune idée.</string>
-    <string name="button_correct">Bonne réponse.</string>
-    <string name="button_incorrect">Mauvaise réponse.</string>
+    <string name="button_show">Voir la réponse.</string>
+    <string name="answer_correct">Je le savais!</string>
+    <string name="answer_incorrect">Je ne le savais pas.</string>
     <string name="score_text">Votre score:</string>
 </resources>
