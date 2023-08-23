@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.MainThread;
@@ -40,7 +41,7 @@ public class QCMFragment extends Fragment {
     private ArrayAdapter<Bird> arrayAdapter;
     private Button nextButton;
     private ListView questionsList;
-
+    private TextView creditTextView;
 
     public QCMFragment() {
         // Required empty public constructor
@@ -63,6 +64,8 @@ public class QCMFragment extends Fragment {
         questionsList = (ListView) currentView.findViewById(R.id.questionsList);
         nextButton = (Button) currentView.findViewById(R.id.nextButton);
         Button replayButton = (Button) currentView.findViewById(R.id.replayButton);
+        creditTextView = (TextView) currentView.findViewById(R.id.creditTextView);
+
 
         // the two following commands are the result of an Android FCkinG BUG concerning binding buttons with methods when using Fragments
         //
@@ -152,6 +155,7 @@ public class QCMFragment extends Fragment {
         // then we load a new sound and a new birds' list.
         quizzHelper.setSounds(soundsByLevel);
         selectedSound = quizzHelper.getSelectedSound();
+        creditTextView.setText(getString(R.string.sound_credit) + " " + selectedSound.getCredit());
         soundsByLevel.remove(selectedSound);
         selectedBirds.clear();
         selectedBirds.addAll(quizzHelper.getBirds());
@@ -186,10 +190,10 @@ public class QCMFragment extends Fragment {
         // Only for debugging purposes
         quizzHelper = new QuizzHelper(soundsByLevel);
         selectedSound = quizzHelper.getSelectedSound();
+        creditTextView.setText(getString(R.string.sound_credit) + " " + selectedSound.getCredit());
         soundsByLevel.remove(selectedSound);
         selectedBirds.clear();
         selectedBirds.addAll(quizzHelper.getBirds());
-
         idQuestion++;
         playSound(selectedSound);
     }

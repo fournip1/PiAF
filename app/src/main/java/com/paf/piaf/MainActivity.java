@@ -49,18 +49,31 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         Log.i(MainActivity.class.getName(), "item id: " + item.getTitle());
-        switch (String.valueOf(item.getTitle())) {
-            case "Réglages": {
-                // we now use a welcome fragment
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .setReorderingAllowed(true)
-                        .replace(R.id.fragmentContainerView, SettingsFragment.class,null)
-                        .addToBackStack(null)
-                        .commit();
-            }
+        String menuItem = String.valueOf(item.getTitle());
+        if (menuItem.equals(getString(R.string.menu_item_settings))) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.fragmentContainerView, SettingsFragment.class,null)
+                    .addToBackStack(null)
+                    .commit();
+        } else if (menuItem.equals(getString(R.string.menu_item_credits))) {
+            ShowTextFragment fragment = ShowTextFragment.newInstance("credits");
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.fragmentContainerView, fragment,null)
+                    .addToBackStack(null)
+                    .commit();
+        } else if (menuItem.equals(getString(R.string.menu_item_licence))) {
+            ShowTextFragment fragment = ShowTextFragment.newInstance("licence");
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.fragmentContainerView, fragment,null)
+                    .addToBackStack(null)
+                    .commit();
         }
-
         return super.onOptionsItemSelected(item);
     }
 

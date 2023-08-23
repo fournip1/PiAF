@@ -36,7 +36,7 @@ public class FreeFragment extends Fragment {
     private RuntimeExceptionDao<Score, Long> scoreRunTimeDao;
     private QuizzHelper quizzHelper;
     private Button showButton, replayButton;
-    private TextView freeQuestionTextView;
+    private TextView freeQuestionTextView, creditTextView;
     private ImageView iconBird;
     // these are used for the swipe
     private float x1, x2;
@@ -76,6 +76,7 @@ public class FreeFragment extends Fragment {
         });
 
         freeQuestionTextView = (TextView) currentView.findViewById(R.id.freeQuestionTextView);
+        creditTextView = (TextView) currentView.findViewById(R.id.creditTextView);
         iconBird = (ImageView) currentView.findViewById(R.id.iconBird);
 
 /*        iconBird.setOnClickListener(new View.OnClickListener() {
@@ -148,6 +149,8 @@ public class FreeFragment extends Fragment {
             } else {
                 iconBird.setImageResource(getActivity().getResources().getIdentifier("standard_bird", "drawable", getActivity().getPackageName()));
             }
+            showButton.setVisibility(View.GONE);
+            replayButton.setVisibility(View.GONE);
             answerShown = true;
         }
     }
@@ -188,6 +191,7 @@ public class FreeFragment extends Fragment {
     public void showNexQuestion() {
         quizzHelper.setSounds(soundsByLevel);
         selectedSound = quizzHelper.getSelectedSound();
+        creditTextView.setText(getString(R.string.sound_credit) + " " + selectedSound.getCredit());
         soundsByLevel.remove(selectedSound);
         Log.i(FreeFragment.class.getName(), "Remaining sounds: " + soundsByLevel.size());
         idQuestion++;
@@ -199,6 +203,8 @@ public class FreeFragment extends Fragment {
         } else {
             iconBird.setImageResource(getActivity().getResources().getIdentifier("standard_bird", "drawable", getActivity().getPackageName()));
         }
+        showButton.setVisibility(View.VISIBLE);
+        replayButton.setVisibility(View.VISIBLE);
         answerShown = false;
     }
 
@@ -221,6 +227,7 @@ public class FreeFragment extends Fragment {
         // Only for debugging purposes
         quizzHelper = new QuizzHelper(soundsByLevel);
         selectedSound = quizzHelper.getSelectedSound();
+        creditTextView.setText(getString(R.string.sound_credit) + " " + selectedSound.getCredit());
         soundsByLevel.remove(selectedSound);
         idQuestion++;
         playSound(selectedSound);

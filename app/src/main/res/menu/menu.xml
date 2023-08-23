@@ -4,6 +4,14 @@
 
     <item
         android:id="@+id/item_settings"
-        android:title="@string/menu_item_settins"
+        android:title="@string/menu_item_settings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/item_credits"
+        android:title="@string/menu_item_credits"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/item_licence"
+        android:title="@string/menu_item_licence"
         app:showAsAction="never" />
 </menu>

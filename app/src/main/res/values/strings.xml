@@ -1,12 +1,15 @@
 <resources>
     <string name="app_name">PiAF</string>
-    <string name="button_play">Jouer!</string>
+    <string name="button_play">Faire le quizz!</string>
     <string name="question_qcm">Qui est cet oiseau?</string>
-    <string name="button_replay">Rejouer</string>
-    <string name="button_next">Suivant</string>
-    <string name="button_end">Terminer</string>
-    <string name="menu_item_settins">Réglages</string>
+    <string name="button_replay">Rejouer le son.</string>
+    <string name="button_next">Question suivante.</string>
+    <string name="button_end">Terminer le quizz.</string>
+    <string name="menu_item_settings">Réglages</string>
+    <string name="menu_item_credits">Crédits</string>
+    <string name="menu_item_licence">Licence</string>
     <string name="game_preferences_header">Jeu</string>
+    <string name="icon_mystery_bird">Oiseau mystère</string>
     <string name="quizz_duration">Combien de temps avez-vous?</string>
     <string name="qcm_mode">Jouer en mode QCM?</string>
     <string name="qcm_mode_on">QCM activé</string>
@@ -20,4 +23,7 @@
     <string name="answer_correct">Je le savais!</string>
     <string name="answer_incorrect">Je ne le savais pas.</string>
     <string name="score_text">Votre score:</string>
+    <string name="sound_credit">Credit sonore:</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

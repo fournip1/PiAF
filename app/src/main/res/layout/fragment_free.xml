@@ -34,7 +34,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/freeQuestionTextView"
         app:layout_constraintBottom_toTopOf="@id/showButton"
-        android:contentDescription="TODO"
+        android:contentDescription="@string/icon_mystery_bird"
         android:src="@mipmap/ic_launcher"
         android:layout_gravity="center"/>
 
@@ -58,5 +58,16 @@
         app:layout_constraintEnd_toStartOf="@+id/showButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/creditTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iconBird"
+        android:textSize="12sp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
