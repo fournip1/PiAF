@@ -272,6 +272,18 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         return sounds;
     }
 
+    public void resetGame() {
+        // we reset the user
+        Level level = getLevelRuntimeDao().queryForFirst();
+        RuntimeExceptionDao<User, Integer> userDao = getUserRuntimeDao();
+        User user = userDao.queryForFirst();
+        user.setLevel(level);
+        userDao.update(user);
+
+        // we reset the scores
+        userDao.executeRaw("DELETE FROM scores");
+    }
+
     /**
      * Close the database connections and clear any cached DAOs.
      */

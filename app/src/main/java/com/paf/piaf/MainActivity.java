@@ -46,12 +46,20 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    public void setWelcomeLevel(Level level) {
+        welcomeFragment.setPresentLevel(level);
+        fragmentManager
+                .beginTransaction()
+                .replace(R.id.fragmentContainerView, welcomeFragment, null)
+                .commit();
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         Log.i(MainActivity.class.getName(), "item id: " + item.getTitle());
         String menuItem = String.valueOf(item.getTitle());
         if (menuItem.equals(getString(R.string.menu_item_settings))) {
-            getSupportFragmentManager()
+            fragmentManager
                     .beginTransaction()
                     .setReorderingAllowed(true)
                     .replace(R.id.fragmentContainerView, SettingsFragment.class,null)
@@ -59,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         } else if (menuItem.equals(getString(R.string.menu_item_credits))) {
             ShowTextFragment fragment = ShowTextFragment.newInstance("credits");
-            getSupportFragmentManager()
+            fragmentManager
                     .beginTransaction()
                     .setReorderingAllowed(true)
                     .replace(R.id.fragmentContainerView, fragment,null)
@@ -67,12 +75,15 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         } else if (menuItem.equals(getString(R.string.menu_item_licence))) {
             ShowTextFragment fragment = ShowTextFragment.newInstance("licence");
-            getSupportFragmentManager()
+            fragmentManager
                     .beginTransaction()
                     .setReorderingAllowed(true)
                     .replace(R.id.fragmentContainerView, fragment,null)
                     .addToBackStack(null)
                     .commit();
+        } else if (menuItem.equals(getString(R.string.menu_item_reset))) {
+            ResetFragment resetFragment = new ResetFragment();
+            resetFragment.show(fragmentManager,"reset");
         }
         return super.onOptionsItemSelected(item);
     }
@@ -88,7 +99,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void playQCMQuizz() {
-        getSupportFragmentManager().beginTransaction()
+        fragmentManager
+                .beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.fragmentContainerView, QCMFragment.class,null)
                 .addToBackStack("WELCOME_TO_QUIZZ")
@@ -97,7 +109,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void playFreeQuizz() {
-        getSupportFragmentManager().beginTransaction()
+        fragmentManager
+                .beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.fragmentContainerView, FreeFragment.class,null)
                 .addToBackStack("WELCOME_TO_QUIZZ")
@@ -121,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().findFragmentByTag("Answers") != null) {
+        if (fragmentManager.findFragmentByTag("Answers") != null) {
             // I'm viewing Fragment C
             fragmentManager.popBackStack("WELCOME_TO_QUIZZ",
                     fragmentManager.POP_BACK_STACK_INCLUSIVE);
