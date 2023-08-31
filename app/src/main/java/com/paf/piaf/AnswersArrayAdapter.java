@@ -2,6 +2,8 @@ package com.paf.piaf;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,13 +29,19 @@ public class AnswersArrayAdapter extends ArrayAdapter<Score> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.activity_listview, parent, false);
         Score currentScore = scores.get(position);
-        TextView firstTextView = (TextView) rowView.findViewById(R.id.firstLine);
         TextView secondTextView = (TextView) rowView.findViewById(R.id.secondLine);
+        TextView firstTextViewStroke = (TextView) rowView.findViewById(R.id.firstLineStroke);
+        TextView thirdTextView = (TextView) rowView.findViewById(R.id.thirdLine);
         ImageView icon = (ImageView)  rowView.findViewById(R.id.iconList);
 
 
-        firstTextView.setText(currentScore.getSound().getBird().getFrench());
-        secondTextView.setText(currentScore.getSound().getType());
+        secondTextView.setText(currentScore.getSound().getBird().getFrench());
+
+        firstTextViewStroke.setPaintFlags(firstTextViewStroke.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+        firstTextViewStroke.setText("");
+        firstTextViewStroke.setVisibility(View.GONE);
+
+        thirdTextView.setText(currentScore.getSound().getType());
 
         // we get the image identifier from the resources
         int imageResourceId = context.getResources().getIdentifier(currentScore.getSound().getBird().getImageBasePath(), "drawable", context.getPackageName());
@@ -47,12 +55,17 @@ public class AnswersArrayAdapter extends ArrayAdapter<Score> {
 
         // we want the text to be green if fine and red if not.
         if (currentScore.getScore()==1) {
-            firstTextView.setTextColor(Color.GREEN);
             secondTextView.setTextColor(Color.GREEN);
+            thirdTextView.setTextColor(Color.GREEN);
         } else
         {
-            firstTextView.setTextColor(Color.RED);
+            if (currentScore.getAnsweredBird()!=null) {
+                firstTextViewStroke.setVisibility(View.VISIBLE);
+                firstTextViewStroke.setText(currentScore.getAnsweredBird().getFrench());
+                firstTextViewStroke.setTextColor(Color.RED);
+            }
             secondTextView.setTextColor(Color.RED);
+            thirdTextView.setTextColor(Color.RED);
         }
         return rowView;
     }

@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -13,7 +14,13 @@ import androidx.fragment.app.FragmentManager;
 
 
 public class MainActivity extends AppCompatActivity {
-    public final static int SPLASH_TIME_OUT = 3000;
+    public final static int SPLASH_TIME_OUT = 5000;
+    // when adding a fragment to back stack, it will be consumed when hitting backspace iif
+    // its position in the backstack is tagged with this parameter
+    // see onbackblabla for details
+    public final static String BACK_STACK_CONSUMED_TAG = "welcome_to_quizz";
+    // this tag is used to mark any other fragment than the welcome one
+    public final static String OTHER_FRAGMENTS_TAG = "other";
     private FragmentManager fragmentManager;
     private WelcomeFragment welcomeFragment;
     @Override
@@ -23,6 +30,11 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolBar);
+
+/*        // this is to have a back button
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);*/
+
 
         fragmentManager = getSupportFragmentManager();
         welcomeFragment = new WelcomeFragment();
@@ -34,10 +46,12 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    /**
-     * Called when the user taps the Send button
-     */
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -47,43 +61,57 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setWelcomeLevel(Level level) {
-        welcomeFragment.setPresentLevel(level);
-        fragmentManager
+        welcomeFragment.setNextLevel(level);
+
+/*        fragmentManager
                 .beginTransaction()
                 .replace(R.id.fragmentContainerView, welcomeFragment, null)
-                .commit();
+                .commit();*/
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         Log.i(MainActivity.class.getName(), "item id: " + item.getTitle());
         String menuItem = String.valueOf(item.getTitle());
-        if (menuItem.equals(getString(R.string.menu_item_settings))) {
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+            if (menuItem.equals(getString(R.string.menu_item_settings))) {
             fragmentManager
                     .beginTransaction()
                     .setReorderingAllowed(true)
-                    .replace(R.id.fragmentContainerView, SettingsFragment.class,null)
-                    .addToBackStack(null)
+                    .replace(R.id.fragmentContainerView, new SettingsFragment(),OTHER_FRAGMENTS_TAG)
+                    .addToBackStack(BACK_STACK_CONSUMED_TAG)
                     .commit();
-        } else if (menuItem.equals(getString(R.string.menu_item_credits))) {
+        } else if (menuItem.equals(getString(R.string.menu_item_about))) {
+                ShowTextFragment fragment = ShowTextFragment.newInstance("about");
+                fragmentManager
+                        .beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.fragmentContainerView, fragment,OTHER_FRAGMENTS_TAG)
+                        .addToBackStack(BACK_STACK_CONSUMED_TAG)
+                        .commit();
+            } else if (menuItem.equals(getString(R.string.menu_item_credits))) {
             ShowTextFragment fragment = ShowTextFragment.newInstance("credits");
             fragmentManager
                     .beginTransaction()
                     .setReorderingAllowed(true)
-                    .replace(R.id.fragmentContainerView, fragment,null)
-                    .addToBackStack(null)
+                    .replace(R.id.fragmentContainerView, fragment,OTHER_FRAGMENTS_TAG)
+                    .addToBackStack(BACK_STACK_CONSUMED_TAG)
                     .commit();
         } else if (menuItem.equals(getString(R.string.menu_item_licence))) {
             ShowTextFragment fragment = ShowTextFragment.newInstance("licence");
             fragmentManager
                     .beginTransaction()
                     .setReorderingAllowed(true)
-                    .replace(R.id.fragmentContainerView, fragment,null)
-                    .addToBackStack(null)
+                    .replace(R.id.fragmentContainerView, fragment,OTHER_FRAGMENTS_TAG)
+                    .addToBackStack(BACK_STACK_CONSUMED_TAG)
                     .commit();
         } else if (menuItem.equals(getString(R.string.menu_item_reset))) {
             ResetFragment resetFragment = new ResetFragment();
-            resetFragment.show(fragmentManager,"reset");
+            resetFragment.show(fragmentManager,null);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayShowHomeEnabled(false);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -93,17 +121,20 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager
                 .beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.fragmentContainerView, answersFragment, "Answers")
-                .addToBackStack("WELCOME_TO_QUIZZ")
+                .replace(R.id.fragmentContainerView, answersFragment, OTHER_FRAGMENTS_TAG)
+                .addToBackStack(BACK_STACK_CONSUMED_TAG)
                 .commit();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     public void playQCMQuizz() {
         fragmentManager
                 .beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.fragmentContainerView, QCMFragment.class,null)
-                .addToBackStack("WELCOME_TO_QUIZZ")
+                .replace(R.id.fragmentContainerView, new QCMFragment(),OTHER_FRAGMENTS_TAG)
+                .addToBackStack(BACK_STACK_CONSUMED_TAG)
                 .commit();
     }
 
@@ -112,8 +143,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager
                 .beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.fragmentContainerView, FreeFragment.class,null)
-                .addToBackStack("WELCOME_TO_QUIZZ")
+                .replace(R.id.fragmentContainerView, new FreeFragment(),OTHER_FRAGMENTS_TAG)
+                .addToBackStack(BACK_STACK_CONSUMED_TAG)
                 .commit();
     }
 
@@ -128,18 +159,20 @@ public class MainActivity extends AppCompatActivity {
         }, SPLASH_TIME_OUT);
         welcomeFragment.setValidated(true);
         welcomeFragment.setPresentLevel(presentLevel);
-        fragmentManager.popBackStack("WELCOME_TO_QUIZZ",
+        fragmentManager.popBackStack(BACK_STACK_CONSUMED_TAG,
                 fragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     @Override
     public void onBackPressed() {
-        if (fragmentManager.findFragmentByTag("Answers") != null) {
+        if (fragmentManager.findFragmentByTag(OTHER_FRAGMENTS_TAG) != null) {
             // I'm viewing Fragment C
-            fragmentManager.popBackStack("WELCOME_TO_QUIZZ",
+            fragmentManager.popBackStack(BACK_STACK_CONSUMED_TAG,
                     fragmentManager.POP_BACK_STACK_INCLUSIVE);
-        } else {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayShowHomeEnabled(false);
+         } else {
             super.onBackPressed();
-        }
+         }
     }
 }

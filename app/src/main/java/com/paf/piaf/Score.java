@@ -13,6 +13,7 @@ public class Score {
     public final static String DATE_MILLIS_FIELD_NAME = "date_millis";
     public final static String SOUND_FIELD_NAME = "sound";
     public final static String SCORE_FIELD_NAME = "score";
+    public final static String ANSWERED_BIRD_FIELD_NAME = "answered_bird";
 
 //    0 means unanswered, 1 means correct answer and -1 means bad answer
     final static int[] SCORES = {0,-1,1};
@@ -23,15 +24,17 @@ public class Score {
     private Sound sound;
     @DatabaseField(canBeNull = false, columnName = SCORE_FIELD_NAME)
     private int score;
-
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = ANSWERED_BIRD_FIELD_NAME)
+    private Bird answeredBird;
 
     Score() {
         // needed by ormlite
     }
 
-    public Score(Sound sound, int score) {
+    public Score(Sound sound, int score, Bird answeredBird) {
         this.score = score;
         this.sound = sound;
+        this.answeredBird = answeredBird;
         this.dateMillis =  System.currentTimeMillis();
     }
 
@@ -45,6 +48,10 @@ public class Score {
 
     public int getScore() {
         return score;
+    }
+
+    public Bird getAnsweredBird() {
+        return answeredBird;
     }
 
     @Override

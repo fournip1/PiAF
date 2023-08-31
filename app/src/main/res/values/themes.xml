@@ -11,7 +11,7 @@
 
     <style name="Theme.PopUpActionBar.Piaf" parent="ThemeOverlay.AppCompat.Light">
         <item name="background">@color/colorAccent</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/gray</item>
         <item name="overlapAnchor">false</item>
         <item name="android:dropDownVerticalOffset">-4dp</item>
     </style>

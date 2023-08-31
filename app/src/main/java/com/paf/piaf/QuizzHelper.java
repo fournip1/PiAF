@@ -38,7 +38,7 @@ public class QuizzHelper {
         return selectedSound;
     }
 
-    public List<Bird> getBirds() {
+    public List<Bird> getBirds(int nbChoices) {
         Set<Bird> hBirds =  sounds.stream()
                 .filter((s) -> (!s.getBird().equals(selectedSound.getBird())))
                 .map(Sound::getBird)
@@ -46,7 +46,7 @@ public class QuizzHelper {
         List<Bird> lBirds = hBirds.stream()
                 .collect(Collectors.toList());
         shuffle(lBirds);
-        List<Bird> selectedBirds = lBirds.subList(0,min(QCMFragment.NB_CHOICES-1,lBirds.size()-1));
+        List<Bird> selectedBirds = lBirds.subList(0,min(nbChoices-1,lBirds.size()-1));
         selectedBirds.add(selectedSound.getBird());
         shuffle(selectedBirds);
         return selectedBirds;

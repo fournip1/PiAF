@@ -142,7 +142,7 @@ public class FreeFragment extends Fragment {
 
     public void showAnswer() {
         if (!answerShown) {
-            freeQuestionTextView.setText(getString(R.string.free_answer) + " " + selectedSound.getBird());
+            freeQuestionTextView.setText(selectedSound.getBird().getFrench());
             int imageResourceId = getActivity().getResources().getIdentifier(selectedSound.getBird().getImageBasePath(), "drawable", getActivity().getPackageName());
             if (imageResourceId != 0) {
                 iconBird.setImageResource(imageResourceId);
@@ -151,15 +151,18 @@ public class FreeFragment extends Fragment {
             }
             showButton.setVisibility(View.GONE);
             replayButton.setVisibility(View.GONE);
+            if (idQuestion == 2) {
+                Toast.makeText(getActivity(), getString(R.string.answer_explanation), Toast.LENGTH_LONG).show();
+            }
             answerShown = true;
         }
     }
 
     public void recordAnswer(boolean right) {
         if (right) {
-            scoreRunTimeDao.create(new Score(selectedSound, 1));
+            scoreRunTimeDao.create(new Score(selectedSound, 1, null));
         } else {
-            scoreRunTimeDao.create(new Score(selectedSound, 0));
+            scoreRunTimeDao.create(new Score(selectedSound, 0, null));
         }
         // maybe it is the last question
         if (idQuestion == nbQuestions + 1) {
@@ -197,7 +200,7 @@ public class FreeFragment extends Fragment {
         idQuestion++;
         playSound(selectedSound);
         freeQuestionTextView.setText(getString(R.string.free_question));
-        int imageResourceId = getActivity().getResources().getIdentifier("ic_foreground", "drawable", getActivity().getPackageName());
+        int imageResourceId = getActivity().getResources().getIdentifier("ic_launcher", "mipmap", getActivity().getPackageName());
         if (imageResourceId != 0) {
             iconBird.setImageResource(imageResourceId);
         } else {

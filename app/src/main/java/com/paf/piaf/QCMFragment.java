@@ -24,7 +24,7 @@ import java.util.List;
 
 
 public class QCMFragment extends Fragment {
-    public final static int NB_CHOICES = 4;
+    private int nbChoices;
     private DatabaseHelper dBHelper;
     private MediaPlayer mediaPlayer;
     private User user;
@@ -123,9 +123,9 @@ public class QCMFragment extends Fragment {
 
         // First, we handle the previous question's' result
         if (selectedSound.getBird().equals(selectedBird)) {
-            scoreRunTimeDao.create(new Score(selectedSound, 1));
+            scoreRunTimeDao.create(new Score(selectedSound, 1, null));
         } else {
-            scoreRunTimeDao.create(new Score(selectedSound, 0));
+            scoreRunTimeDao.create(new Score(selectedSound, 0, selectedBird));
         }
 
         // if this is the last question, we quit.
@@ -158,7 +158,7 @@ public class QCMFragment extends Fragment {
         creditTextView.setText(getString(R.string.sound_credit) + " " + selectedSound.getCredit());
         soundsByLevel.remove(selectedSound);
         selectedBirds.clear();
-        selectedBirds.addAll(quizzHelper.getBirds());
+        selectedBirds.addAll(quizzHelper.getBirds(nbChoices));
         arrayAdapter.notifyDataSetChanged();
 /*        Log.i("Selected sound", "Sound name: " + selectedSound.toString());
         Log.i(QuizzActivity.class.getName(), "Bird 1: " + selectedBirds.get(0).toString());
@@ -183,6 +183,7 @@ public class QCMFragment extends Fragment {
         presentLevel = user.getLevel();
         levels = dBHelper.getLevelRuntimeDao().queryForAll();
         nbQuestions = user.getNbQuestions();
+        nbChoices = user.getNbChoices();
 
         // nbQuestions =  Integer.parseInt(preferences.getString("nb_questions","10"));;
         // finally we get the sounds for the corresponding level
@@ -193,7 +194,7 @@ public class QCMFragment extends Fragment {
         creditTextView.setText(getString(R.string.sound_credit) + " " + selectedSound.getCredit());
         soundsByLevel.remove(selectedSound);
         selectedBirds.clear();
-        selectedBirds.addAll(quizzHelper.getBirds());
+        selectedBirds.addAll(quizzHelper.getBirds(nbChoices));
         idQuestion++;
         playSound(selectedSound);
     }

@@ -23,6 +23,8 @@ public class WelcomeFragment extends Fragment {
     private Level presentLevel, nextLevel;
     private static final String ARG_VALIDATION_LEVEL = "isValidated";
     private boolean validated = false;
+    private TextView levelTextView;
+    private ImageView icon;
 
 
     public WelcomeFragment() {
@@ -59,8 +61,8 @@ public class WelcomeFragment extends Fragment {
         // modify the text of the textview
         // modify the image
         Button playButton = (Button) currentView.findViewById(R.id.playButton);
-        TextView levelTextView = (TextView)  currentView.findViewById(R.id.levelTextView);
-        ImageView icon = (ImageView)  currentView.findViewById(R.id.iconUser);
+        levelTextView = (TextView)  currentView.findViewById(R.id.levelTextView);
+        icon = (ImageView)  currentView.findViewById(R.id.iconUser);
 
         playButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -69,6 +71,7 @@ public class WelcomeFragment extends Fragment {
         });
 
         if (validated) {
+            playButton.setVisibility(View.GONE);
             int levelValidationImageResourceId = getActivity().getResources().getIdentifier(presentLevel.getLevelValidationImageBasePath(), "drawable", getActivity().getPackageName());
             if (levelValidationImageResourceId != 0) {
                 Glide.with(this).load(levelValidationImageResourceId).into(icon);
@@ -77,19 +80,30 @@ public class WelcomeFragment extends Fragment {
             }
             levelTextView.setText(getString(R.string.level_validation) + " " + presentLevel.getFrench() + "!");
         } else {
-            int imageResourceId = getActivity().getResources().getIdentifier(nextLevel.getImageBasePath(), "drawable", getActivity().getPackageName());
-            if (imageResourceId != 0) {
-                icon.setImageResource(imageResourceId);
-            } else {
-                icon.setImageResource(getActivity().getResources().getIdentifier("standard_bird","drawable",getActivity().getPackageName()));
-            }
-            levelTextView.setText(getString(R.string.level_information) + " " + nextLevel.getFrench() + ".");
+            playButton.setVisibility(View.VISIBLE);
+            updateTextAndImage();
         }
         return currentView;
     }
 
+    public void updateTextAndImage() {
+        int imageResourceId = getActivity().getResources().getIdentifier(nextLevel.getImageBasePath(), "drawable", getActivity().getPackageName());
+        if (imageResourceId != 0) {
+            icon.setImageResource(imageResourceId);
+        } else {
+            icon.setImageResource(getActivity().getResources().getIdentifier("standard_bird","drawable",getActivity().getPackageName()));
+        }
+        levelTextView.setText(getString(R.string.level_information) + " " + nextLevel.getFrench() + ".");
+    }
+
     public void setPresentLevel(Level presentLevel) {
         this.presentLevel = presentLevel;
+    }
+
+    public void setNextLevel(Level nextLevel) {
+        this.nextLevel = nextLevel;
+        // we update as well the text and images
+        updateTextAndImage();
     }
 
     public void playQuizz() {

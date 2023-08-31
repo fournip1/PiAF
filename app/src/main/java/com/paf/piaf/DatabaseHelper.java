@@ -121,7 +121,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
 
         // here we create the default app user
         Level level = getLevelRuntimeDao().queryForFirst();
-        User user = new User(true,level, 10);
+        User user = new User(true,level, 10, 4);
         userDao.create(user);
     }
 

@@ -13,4 +13,11 @@
         <item>15</item>
         <item>20</item>
     </string-array>
+
+    <string-array name="quizz_number_of_choices">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+
 </resources>

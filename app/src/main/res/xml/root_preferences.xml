@@ -15,6 +15,14 @@
             app:title="@string/quizz_duration"
             app:useSimpleSummaryProvider="true" />
 
+        <ListPreference
+            app:key="nb_choices"
+            app:defaultValue="4"
+            app:entries="@array/quizz_number_of_choices"
+            app:entryValues="@array/quizz_number_of_choices"
+            app:title="@string/quizz_choices"
+            app:useSimpleSummaryProvider="true" />
+
         <SwitchPreferenceCompat
             app:key="qcm_mode"
             app:title="@string/qcm_mode"
