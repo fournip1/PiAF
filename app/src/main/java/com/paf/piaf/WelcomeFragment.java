@@ -23,7 +23,7 @@ public class WelcomeFragment extends Fragment {
     private Level presentLevel, nextLevel;
     private static final String ARG_VALIDATION_LEVEL = "isValidated";
     private boolean validated = false;
-    private TextView levelTextView;
+    private TextView levelTextView, targetTextView;
     private ImageView icon;
 
 
@@ -62,6 +62,7 @@ public class WelcomeFragment extends Fragment {
         // modify the image
         Button playButton = (Button) currentView.findViewById(R.id.playButton);
         levelTextView = (TextView)  currentView.findViewById(R.id.levelTextView);
+        targetTextView = (TextView)  currentView.findViewById(R.id.targetTextView);
         icon = (ImageView)  currentView.findViewById(R.id.iconUser);
 
         playButton.setOnClickListener(new View.OnClickListener() {
@@ -94,6 +95,7 @@ public class WelcomeFragment extends Fragment {
             icon.setImageResource(getActivity().getResources().getIdentifier("standard_bird","drawable",getActivity().getPackageName()));
         }
         levelTextView.setText(getString(R.string.level_information) + " " + nextLevel.getFrench() + ".");
+        targetTextView.setText(getString(R.string.target_information_1) + " " + Long.toString(dBHelper.getTargetNextLevel()) + " " + getString(R.string.target_information_2));
     }
 
     public void setPresentLevel(Level presentLevel) {

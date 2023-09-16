@@ -18,8 +18,9 @@
     <string name="qcm_mode_on">QCM activé</string>
     <string name="qcm_mode_off">Mode libre activé.</string>
     <string name="level_information">Vous êtes au niveau </string>
+    <string name="target_information_1">Plus que </string>
+    <string name="target_information_2"> bonnes réponses avant validation.</string>
     <string name="level_validation">Vous avez validé le niveau </string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="free_question">Qui suis-je?</string>
     <string name="free_answer">Mon nom:</string>
     <string name="button_show">Voir la réponse.</string>

@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Database helper class used to manage the creation and upgrading of your database. This class also usually provides
@@ -224,6 +225,31 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         return userRuntimeDao;
     }
 
+    public long getTargetNextLevel() {
+        Float fMaxErrors = (Score.SCORES_DEPTH*(100-Score.VALIDATION_PERCENTAGE)/100);
+        Long maxErrors = fMaxErrors.longValue();
+        Long lastValidationTimestamp = userRuntimeDao.queryForFirst().getLastValidationTimestamp();
+        Log.i(DatabaseHelper.class.getName(),"Maximum erreurs: " + maxErrors);
+        int i=0;
+        int e=0;
+        List<Score> lastScores = getLastScores(Score.SCORES_DEPTH).stream()
+                .filter((s) -> s.dateMillis > lastValidationTimestamp)
+                .collect(Collectors.toList());
+        while (e <= maxErrors && i<lastScores.size()) {
+            if (lastScores.get(i).getScore()!=1) {
+                e++;
+            }
+            Log.i(DatabaseHelper.class.getName(),"valeur de i:" + i);
+            Log.i(DatabaseHelper.class.getName(),"valeur de e:" + e);
+            i++;
+        }
+        // Case where we reach the bottom of the list
+        if (i==lastScores.size() && e!=maxErrors+1) {
+            i++;
+        }
+        return Score.SCORES_DEPTH+1-i;
+    }
+
     public boolean validateLevel() {
         // try {
         List<Score> lastScores = getLastScores(Score.SCORES_DEPTH);
@@ -238,7 +264,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         } else {
             return false;
         }
-
         // } catch(SQLException e) {
         // Log.e(DatabaseHelper.class.getName(), "Error in the SQL Query to get the sounds for a given level.");
         // return false;
