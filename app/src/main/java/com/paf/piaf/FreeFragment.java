@@ -195,7 +195,7 @@ public class FreeFragment extends Fragment {
         quizzHelper.setSounds(soundsByLevel);
         selectedSound = quizzHelper.getSelectedSound();
         creditTextView.setText(getString(R.string.sound_credit) + " " + selectedSound.getCredit());
-        soundsByLevel.remove(selectedSound);
+        soundsByLevel.removeAll(selectedSound.getBird().getSounds());
         Log.i(FreeFragment.class.getName(), "Remaining sounds: " + soundsByLevel.size());
         idQuestion++;
         playSound(selectedSound);
@@ -231,7 +231,7 @@ public class FreeFragment extends Fragment {
         quizzHelper = new QuizzHelper(soundsByLevel);
         selectedSound = quizzHelper.getSelectedSound();
         creditTextView.setText(getString(R.string.sound_credit) + " " + selectedSound.getCredit());
-        soundsByLevel.remove(selectedSound);
+        soundsByLevel.removeAll(selectedSound.getBird().getSounds());
         idQuestion++;
         playSound(selectedSound);
     }

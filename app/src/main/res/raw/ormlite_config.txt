@@ -1,5 +1,5 @@
 #
-# generated on 2023/08/29 01:43:54
+# generated on 2023/10/28 08:12:01
 #
 # --table-start--
 dataClass=com.paf.piaf.Bird
@@ -27,6 +27,10 @@ columnName=image_path
 # --field-start--
 fieldName=audioDescriptionPath
 columnName=audio_description_path
+# --field-end--
+# --field-start--
+fieldName=url
+columnName=url
 # --field-end--
 # --field-start--
 fieldName=sounds

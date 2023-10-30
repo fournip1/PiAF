@@ -1,6 +1,8 @@
 package com.paf.piaf;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -83,6 +85,18 @@ public class AnswersFragment extends Fragment {
                 playSound(((Score) object).getSound());
             }
         });
+
+        answsersList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, final View view,
+                                    int position, long id) {
+                Object object = parent.getItemAtPosition(position);
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(((Score) object).getSound().getBird().getUrl()));
+                startActivity(browserIntent);
+                return true;
+            }
+        });
+
         initializeAnswers();
         return currentView;
     }

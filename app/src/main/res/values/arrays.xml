@@ -4,20 +4,18 @@
         <item>1 minute</item>
         <item>2 minutes</item>
         <item>3 minutes</item>
-        <item>4 minutes</item>
     </string-array>
 
     <string-array name="quizz_number_of_questions">
         <item>5</item>
         <item>10</item>
         <item>15</item>
-        <item>20</item>
     </string-array>
 
     <string-array name="quizz_number_of_choices">
+        <item>3</item>
         <item>4</item>
         <item>5</item>
         <item>6</item>
     </string-array>
-
 </resources>

@@ -156,7 +156,7 @@ public class QCMFragment extends Fragment {
         quizzHelper.setSounds(soundsByLevel);
         selectedSound = quizzHelper.getSelectedSound();
         creditTextView.setText(getString(R.string.sound_credit) + " " + selectedSound.getCredit());
-        soundsByLevel.remove(selectedSound);
+        soundsByLevel.removeAll(selectedSound.getBird().getSounds());
         selectedBirds.clear();
         selectedBirds.addAll(quizzHelper.getBirds(nbChoices));
         arrayAdapter.notifyDataSetChanged();
@@ -164,8 +164,8 @@ public class QCMFragment extends Fragment {
         Log.i(QuizzActivity.class.getName(), "Bird 1: " + selectedBirds.get(0).toString());
         Log.i(QuizzActivity.class.getName(), "Bird 2: " + selectedBirds.get(1).toString());
         Log.i(QuizzActivity.class.getName(), "Bird 3: " + selectedBirds.get(2).toString());
-        Log.i(QuizzActivity.class.getName(), "Bird 4: " + selectedBirds.get(3).toString());*/
-        Log.i(QCMFragment.class.getName(), "Remaining sounds: " + soundsByLevel.size());
+        Log.i(QuizzActivity.class.getName(), "Bird 4: " + selectedBirds.get(3).toString());
+        Log.i(QCMFragment.class.getName(), "Remaining sounds: " + soundsByLevel.size());*/
         idQuestion++;
         playSound(selectedSound);
     }
@@ -192,7 +192,7 @@ public class QCMFragment extends Fragment {
         quizzHelper = new QuizzHelper(soundsByLevel);
         selectedSound = quizzHelper.getSelectedSound();
         creditTextView.setText(getString(R.string.sound_credit) + " " + selectedSound.getCredit());
-        soundsByLevel.remove(selectedSound);
+        soundsByLevel.removeAll(selectedSound.getBird().getSounds());
         selectedBirds.clear();
         selectedBirds.addAll(quizzHelper.getBirds(nbChoices));
         idQuestion++;

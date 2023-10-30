@@ -43,4 +43,6 @@
             android:ellipsize="marquee"
             android:textSize="12sp" />
     </LinearLayout>
+
+
 </LinearLayout>
