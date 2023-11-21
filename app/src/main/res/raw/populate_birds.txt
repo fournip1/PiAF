@@ -792,7 +792,7 @@ INSERT INTO birds (latin,french,image_path,audio_description_path,url) VALUES ("
 INSERT INTO birds (latin,french,image_path,audio_description_path,url) VALUES ("Buteo solitarius","Buse d'Hawaï","","","")
 INSERT INTO birds (latin,french,image_path,audio_description_path,url) VALUES ("Buteo jamaicensis","Buse à queue rousse","","","")
 INSERT INTO birds (latin,french,image_path,audio_description_path,url) VALUES ("Buteo ventralis","Buse de Patagonie","","","")
-INSERT INTO birds (latin,french,image_path,audio_description_path,url) VALUES ("Buteo buteo","Buse variable","","","")
+INSERT INTO birds (latin,french,image_path,audio_description_path,url) VALUES ("Buteo buteo","Buse variable","buse_variable.jpg","https://www.oiseaux.net/oiseaux/buse.variable.html","https://www.oiseaux.net/oiseaux/buse.variable.html")
 INSERT INTO birds (latin,french,image_path,audio_description_path,url) VALUES ("Buteo oreophilus","Buse montagnarde","","","")
 INSERT INTO birds (latin,french,image_path,audio_description_path,url) VALUES ("Buteo brachypterus","Buse de Madagascar","","","")
 INSERT INTO birds (latin,french,image_path,audio_description_path,url) VALUES ("Buteo rufinus","Buse féroce","","","")

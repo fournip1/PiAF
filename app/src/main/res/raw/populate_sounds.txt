@@ -255,3 +255,5 @@ INSERT INTO sounds (bird,type,level,path,credit) VALUES (1711,"Cris",2,"sterne_p
 INSERT INTO sounds (bird,type,level,path,credit) VALUES (7160,"Alarme",4,"mesange_noire_alarme_1.ogg","Jean C. Roché")
 INSERT INTO sounds (bird,type,level,path,credit) VALUES (8511,"Chant d'un M",1,"moineau_domestique_chant_2.ogg","Jean C. Roché")
 INSERT INTO sounds (bird,type,level,path,credit) VALUES (9035,"Cris d’une F",3,"bouvreuil_pivoine_cris_f.ogg","Jean C. Roché")
+INSERT INTO sounds (bird,type,level,path,credit) VALUES (795,"Parade d’un couple en vol",3,"buse_variable_parade.ogg","Jean C. Roché")
+INSERT INTO sounds (bird,type,level,path,credit) VALUES (795,"Cris habituels",3,"buse_variable_cris.ogg","Jean C. Roché")
