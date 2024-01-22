@@ -2,7 +2,6 @@ package com.paf.piaf;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolBar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolBar = findViewById(R.id.toolbar);
         setSupportActionBar(toolBar);
 
 /*        // this is to have a back button
@@ -71,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        Log.i(MainActivity.class.getName(), "item id: " + item.getTitle());
+        // Log.i(MainActivity.class.getName(), "item id: " + item.getTitle());
         String menuItem = String.valueOf(item.getTitle());
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -99,7 +98,15 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.fragmentContainerView, fragment,OTHER_FRAGMENTS_TAG)
                     .addToBackStack(BACK_STACK_CONSUMED_TAG)
                     .commit();
-        } else if (menuItem.equals(getString(R.string.menu_item_licence))) {
+        } else if (menuItem.equals(getString(R.string.menu_item_privacy))) {
+                ShowTextFragment fragment = ShowTextFragment.newInstance("privacy");
+                fragmentManager
+                        .beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.fragmentContainerView, fragment,OTHER_FRAGMENTS_TAG)
+                        .addToBackStack(BACK_STACK_CONSUMED_TAG)
+                        .commit();
+            } else if (menuItem.equals(getString(R.string.menu_item_licence))) {
             ShowTextFragment fragment = ShowTextFragment.newInstance("licence");
             fragmentManager
                     .beginTransaction()
@@ -138,6 +145,18 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
+
+    public void showPrivacy() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        ShowTextFragment fragment = ShowTextFragment.newInstance("privacy");
+        fragmentManager
+                .beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.fragmentContainerView, fragment,OTHER_FRAGMENTS_TAG)
+                .addToBackStack(BACK_STACK_CONSUMED_TAG)
+                .commit();
+    }
 
     public void playFreeQuizz() {
         fragmentManager

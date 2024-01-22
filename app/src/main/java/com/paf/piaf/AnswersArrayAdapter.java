@@ -3,7 +3,6 @@ package com.paf.piaf;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,10 +28,10 @@ public class AnswersArrayAdapter extends ArrayAdapter<Score> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.activity_listview, parent, false);
         Score currentScore = scores.get(position);
-        TextView secondTextView = (TextView) rowView.findViewById(R.id.secondLine);
-        TextView firstTextViewStroke = (TextView) rowView.findViewById(R.id.firstLineStroke);
-        TextView thirdTextView = (TextView) rowView.findViewById(R.id.thirdLine);
-        ImageView icon = (ImageView)  rowView.findViewById(R.id.iconList);
+        TextView secondTextView = rowView.findViewById(R.id.secondLine);
+        TextView firstTextViewStroke = rowView.findViewById(R.id.firstLineStroke);
+        TextView thirdTextView = rowView.findViewById(R.id.thirdLine);
+        ImageView icon = rowView.findViewById(R.id.iconList);
 
 
         secondTextView.setText(currentScore.getSound().getBird().getFrench());

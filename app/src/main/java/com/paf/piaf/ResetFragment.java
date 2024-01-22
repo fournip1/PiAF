@@ -3,7 +3,6 @@ package com.paf.piaf;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.MainThread;
@@ -12,12 +11,10 @@ import androidx.fragment.app.DialogFragment;
 
 public class ResetFragment extends DialogFragment {
     private DatabaseHelper dBHelper;
-    private User user;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         dBHelper = new DatabaseHelper(getActivity());
-        User user = dBHelper.getUserRuntimeDao().queryForFirst();
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.dialog_reset_game)
@@ -45,7 +42,7 @@ public class ResetFragment extends DialogFragment {
         if (dBHelper!=null) {
             dBHelper.close();
         }
-        Log.i(ResetFragment.class.getName(),"Reset fragment destroyed.");
+        // Log.i(ResetFragment.class.getName(),"Reset fragment destroyed.");
         super.onDestroy();
     }
 }

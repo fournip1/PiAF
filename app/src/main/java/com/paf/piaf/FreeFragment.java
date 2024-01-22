@@ -3,7 +3,6 @@ package com.paf.piaf;
 import android.annotation.SuppressLint;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -60,8 +59,8 @@ public class FreeFragment extends Fragment {
         View currentView = inflater.inflate(R.layout.fragment_free, container, false);
         // Inflate the layout for this fragment
 
-        showButton = (Button) currentView.findViewById(R.id.showButton);
-        replayButton = (Button) currentView.findViewById(R.id.replayButton);
+        showButton = currentView.findViewById(R.id.showButton);
+        replayButton = currentView.findViewById(R.id.replayButton);
 
         showButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -75,17 +74,9 @@ public class FreeFragment extends Fragment {
             }
         });
 
-        freeQuestionTextView = (TextView) currentView.findViewById(R.id.freeQuestionTextView);
-        creditTextView = (TextView) currentView.findViewById(R.id.creditTextView);
-        iconBird = (ImageView) currentView.findViewById(R.id.iconBird);
-
-/*        iconBird.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (v.equals(iconBird) && !answerShown) {
-                    replay();
-                }
-            }
-        });*/
+        freeQuestionTextView = currentView.findViewById(R.id.freeQuestionTextView);
+        creditTextView = currentView.findViewById(R.id.creditTextView);
+        iconBird = currentView.findViewById(R.id.iconBird);
 
         // we want to detect the swipes left and right
         iconBird.setOnTouchListener(new View.OnTouchListener() {
@@ -173,17 +164,13 @@ public class FreeFragment extends Fragment {
     }
 
     public void lastQuestionRoutine() {
-        Level nextLevel;
         // we display the plain answer fragment!
         if (dBHelper.validateLevel()) {
             user.setLastValidationTimestamp();
-            Log.i(AnswersFragment.class.getName(), "Level validated!");
+            // Log.i(AnswersFragment.class.getName(), "Level validated!");
             if (presentLevel.getId() < levels.size()) {
-                nextLevel = dBHelper.getLevelRuntimeDao().queryForId(presentLevel.getId() + 1);
-                user.setLevel(nextLevel);
+                user.setLevel(dBHelper.getLevelRuntimeDao().queryForId(presentLevel.getId() + 1));
                 userRunTimeDao.update(user);
-            } else {
-                nextLevel = presentLevel;
             }
             ((MainActivity) getActivity()).showFiestaWelcome(idQuestion - 1, presentLevel);
         } else {
@@ -196,7 +183,7 @@ public class FreeFragment extends Fragment {
         selectedSound = quizzHelper.getSelectedSound();
         creditTextView.setText(getString(R.string.sound_credit) + " " + selectedSound.getCredit());
         soundsByLevel.removeAll(selectedSound.getBird().getSounds());
-        Log.i(FreeFragment.class.getName(), "Remaining sounds: " + soundsByLevel.size());
+        // Log.i(FreeFragment.class.getName(), "Remaining sounds: " + soundsByLevel.size());
         idQuestion++;
         playSound(selectedSound);
         freeQuestionTextView.setText(getString(R.string.free_question));
@@ -242,12 +229,14 @@ public class FreeFragment extends Fragment {
     public void onDestroy() {
         userRunTimeDao = null;
         scoreRunTimeDao = null;
-        dBHelper.close();
+        if (dBHelper!=null) {
+            dBHelper.close();
+        }
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
         }
-        Log.i(FreeFragment.class.getName(), "Free fragment destroyed.");
+        // Log.i(FreeFragment.class.getName(), "Free fragment destroyed.");
         super.onDestroy();
     }
 }

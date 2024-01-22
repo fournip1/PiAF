@@ -18,6 +18,10 @@
         android:title="@string/menu_item_licence"
         app:showAsAction="never" />
     <item
+        android:id="@+id/item_privacy"
+        android:title="@string/menu_item_privacy"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/item_reset"
         android:title="@string/menu_item_reset"
         app:showAsAction="never" />

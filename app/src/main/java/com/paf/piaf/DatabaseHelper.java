@@ -57,13 +57,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
     @Override
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
         try {
-            Log.i(DatabaseHelper.class.getName(), "onCreate");
+            // Log.i(DatabaseHelper.class.getName(), "onCreate");
             TableUtils.createTableIfNotExists(connectionSource, Bird.class);
             TableUtils.createTableIfNotExists(connectionSource, Sound.class);
             TableUtils.createTableIfNotExists(connectionSource, Score.class);
             TableUtils.createTableIfNotExists(connectionSource, User.class);
             TableUtils.createTableIfNotExists(connectionSource, Level.class);
-            Log.i(DatabaseHelper.class.getName(),"Database created.");
+            // Log.i(DatabaseHelper.class.getName(),"Database created.");
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
             throw new RuntimeException(e);
@@ -82,7 +82,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
                 userDao.updateRaw(strLine);
             }
             dataInputStream.close();
-            Log.i(this.getClass().getName(), "Levels insertion went right");
+            // Log.i(this.getClass().getName(), "Levels insertion went right");
         } catch (Exception e) {
             Log.e(this.getClass().getName(), "Levels insertion went wrong");
             e.printStackTrace();
@@ -98,7 +98,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
                 userDao.updateRaw(strLine);
             }
             dataInputStream.close();
-            Log.i(this.getClass().getName(), "Birds insertion went right");
+            // Log.i(this.getClass().getName(), "Birds insertion went right");
         } catch (Exception e) {
             Log.e(this.getClass().getName(), "Birds insertion went wrong");
             e.printStackTrace();
@@ -114,7 +114,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
                 userDao.updateRaw(strLine);
             }
             dataInputStream.close();
-            Log.i(this.getClass().getName(), "Sounds insertion went right");
+            // Log.i(this.getClass().getName(), "Sounds insertion went right");
         } catch (Exception e) {
             Log.e(this.getClass().getName(), "Sounds insertion went wrong");
             e.printStackTrace();
@@ -122,7 +122,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
 
         // here we create the default app user
         Level level = getLevelRuntimeDao().queryForFirst();
-        User user = new User(true,level, 10, 4);
+        User user = new User(true,true,level, 10, 4);
         userDao.create(user);
     }
 
@@ -134,7 +134,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
             // we want the user and the scores to be kept
-            Log.i(DatabaseHelper.class.getName(), "onUpgrade");
+            // Log.i(DatabaseHelper.class.getName(), "onUpgrade");
             TableUtils.dropTable(connectionSource, Bird.class, true);
             TableUtils.dropTable(connectionSource, Sound.class, true);
             onCreate(db, connectionSource);
@@ -229,7 +229,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         Float fMaxErrors = (Score.SCORES_DEPTH*(100-Score.VALIDATION_PERCENTAGE)/100);
         Long maxErrors = fMaxErrors.longValue();
         Long lastValidationTimestamp = userRuntimeDao.queryForFirst().getLastValidationTimestamp();
-        Log.i(DatabaseHelper.class.getName(),"Maximum erreurs: " + maxErrors);
+        // Log.i(DatabaseHelper.class.getName(),"Maximum erreurs: " + maxErrors);
         int i=0;
         int e=0;
         List<Score> lastScores = getLastScores(Score.SCORES_DEPTH).stream()
@@ -239,8 +239,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
             if (lastScores.get(i).getScore()!=1) {
                 e++;
             }
-            Log.i(DatabaseHelper.class.getName(),"valeur de i:" + i);
-            Log.i(DatabaseHelper.class.getName(),"valeur de e:" + e);
+            // Log.i(DatabaseHelper.class.getName(),"valeur de i:" + i);
+            // Log.i(DatabaseHelper.class.getName(),"valeur de e:" + e);
             i++;
         }
         // Case where we reach the bottom of the list
@@ -258,7 +258,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
                 .filter((s) -> (s.dateMillis > userRuntimeDao.queryForFirst().getLastValidationTimestamp()))
                 .count();
         float percentageValidated = (float) 100 * totalScore / Score.SCORES_DEPTH;
-        Log.i(DatabaseHelper.class.getName(), "Percentage validated: " + percentageValidated);
+        // Log.i(DatabaseHelper.class.getName(), "Percentage validated: " + percentageValidated);
         if (percentageValidated >= Score.VALIDATION_PERCENTAGE) {
             return true;
         } else {
@@ -324,7 +324,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         soundRuntimeDao = null;
         scoreRuntimeDao = null;
         userRuntimeDao = null;
-        Log.i(DatabaseHelper.class.getName(),"Closing database.");
+        // Log.i(DatabaseHelper.class.getName(),"Closing database.");
         super.close();
     }
 }

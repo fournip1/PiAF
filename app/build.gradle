@@ -4,13 +4,13 @@ plugins {
 
 android {
     namespace 'com.paf.piaf'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.paf.piaf"
         minSdk 24
         targetSdk 33
-        versionCode 1
+        versionCode 4
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -35,8 +35,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation group: 'com.j256.ormlite', name: 'ormlite-android', version: '6.1'
-    implementation group: 'com.google.android.material', name: 'material', version: '1.9.0'
-    implementation 'androidx.preference:preference:1.2.0'
+    implementation group: 'com.google.android.material', name: 'material', version: '1.11.0'
+    implementation 'androidx.preference:preference:1.2.1'
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

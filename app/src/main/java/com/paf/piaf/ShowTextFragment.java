@@ -18,7 +18,7 @@ public class ShowTextFragment extends Fragment {
 
     private static final String ARG_TEXT_ID = "text_id";
     private String textId;
-    private WebView webView;
+
 
 
     public ShowTextFragment() {
@@ -48,9 +48,8 @@ public class ShowTextFragment extends Fragment {
         // Inflate the layout for this fragment
         View currentView = inflater.inflate(R.layout.fragment_show_text, container, false);
         // init webView
-        webView = (WebView) currentView.findViewById(R.id.htmlView);
+        WebView webView = currentView.findViewById(R.id.htmlView);
         // displaying content in WebView from html file that stored in assets folder
-        webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl("file:///android_asset/" + textId + ".html");
         return currentView;
     }

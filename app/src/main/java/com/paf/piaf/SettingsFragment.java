@@ -1,14 +1,12 @@
 package com.paf.piaf;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.MainThread;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.SwitchPreference;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.j256.ormlite.dao.RuntimeExceptionDao;
@@ -38,7 +36,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
-                Log.i(SettingsFragment.class.getName(),"QCM chosen: "+ newValue);
+                // Log.i(SettingsFragment.class.getName(),"QCM chosen: "+ newValue);
                 user.setQCM((boolean) newValue);
                 userRuntimeExceptionDao.update(user);
                 return true;
@@ -49,8 +47,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
-                Log.i(SettingsFragment.class.getName(),"NB Questions: "+ newValue);
-                user.setNbQuestions((int) Integer.parseInt((String) newValue));
+                // Log.i(SettingsFragment.class.getName(),"NB Questions: "+ newValue);
+                user.setNbQuestions(Integer.parseInt((String) newValue));
                 userRuntimeExceptionDao.update(user);
                 return true;
             }
@@ -61,8 +59,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceChange(Preference preference,
                                               Object newValue) {
-                Log.i(SettingsFragment.class.getName(),"NB Choices: "+ newValue);
-                user.setNbChoices((int) Integer.parseInt((String) newValue));
+                // Log.i(SettingsFragment.class.getName(),"NB Choices: "+ newValue);
+                user.setNbChoices(Integer.parseInt((String) newValue));
                 userRuntimeExceptionDao.update(user);
                 return true;
             }
@@ -73,7 +71,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @MainThread
     @CallSuper
     public void onDestroy() {
-        dBHelper.close();
+        if (dBHelper!=null) {
+            dBHelper.close();
+        }
         super.onDestroy();
     }
 }

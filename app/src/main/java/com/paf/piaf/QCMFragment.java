@@ -3,7 +3,6 @@ package com.paf.piaf;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,10 +60,10 @@ public class QCMFragment extends Fragment {
 
         View currentView = inflater.inflate(R.layout.fragment_q_c_m, container, false);
 
-        questionsList = (ListView) currentView.findViewById(R.id.questionsList);
-        nextButton = (Button) currentView.findViewById(R.id.nextButton);
-        Button replayButton = (Button) currentView.findViewById(R.id.replayButton);
-        creditTextView = (TextView) currentView.findViewById(R.id.creditTextView);
+        questionsList = currentView.findViewById(R.id.questionsList);
+        nextButton = currentView.findViewById(R.id.nextButton);
+        Button replayButton = currentView.findViewById(R.id.replayButton);
+        creditTextView = currentView.findViewById(R.id.creditTextView);
 
 
         // the two following commands are the result of an Android FCkinG BUG concerning binding buttons with methods when using Fragments
@@ -131,17 +130,13 @@ public class QCMFragment extends Fragment {
         // if this is the last question, we quit.
         // if it is the last but one question, we change the text of the button.
         if (idQuestion == nbQuestions+1) {
-            Level nextLevel;
             // we display the plain answer fragment!
             if (dBHelper.validateLevel()) {
                 user.setLastValidationTimestamp();
-                Log.i(AnswersFragment.class.getName(),"Level validated!");
+                // (AnswersFragment.class.getName(),"Level validated!");
                 if (presentLevel.getId() < levels.size()) {
-                    nextLevel = dBHelper.getLevelRuntimeDao().queryForId(presentLevel.getId()+1);
-                    user.setLevel(nextLevel);
+                    user.setLevel(dBHelper.getLevelRuntimeDao().queryForId(presentLevel.getId()+1));
                     userRunTimeDao.update(user);
-                } else {
-                    nextLevel = presentLevel;
                 }
                 ((MainActivity) getActivity()).showFiestaWelcome(idQuestion-1, presentLevel);
             } else {
@@ -160,12 +155,12 @@ public class QCMFragment extends Fragment {
         selectedBirds.clear();
         selectedBirds.addAll(quizzHelper.getBirds(nbChoices));
         arrayAdapter.notifyDataSetChanged();
-/*        Log.i("Selected sound", "Sound name: " + selectedSound.toString());
-        Log.i(QuizzActivity.class.getName(), "Bird 1: " + selectedBirds.get(0).toString());
-        Log.i(QuizzActivity.class.getName(), "Bird 2: " + selectedBirds.get(1).toString());
-        Log.i(QuizzActivity.class.getName(), "Bird 3: " + selectedBirds.get(2).toString());
-        Log.i(QuizzActivity.class.getName(), "Bird 4: " + selectedBirds.get(3).toString());
-        Log.i(QCMFragment.class.getName(), "Remaining sounds: " + soundsByLevel.size());*/
+/*        ("Selected sound", "Sound name: " + selectedSound.toString());
+        (QuizzActivity.class.getName(), "Bird 1: " + selectedBirds.get(0).toString());
+        (QuizzActivity.class.getName(), "Bird 2: " + selectedBirds.get(1).toString());
+        (QuizzActivity.class.getName(), "Bird 3: " + selectedBirds.get(2).toString());
+        (QuizzActivity.class.getName(), "Bird 4: " + selectedBirds.get(3).toString());
+        (QCMFragment.class.getName(), "Remaining sounds: " + soundsByLevel.size());*/
         idQuestion++;
         playSound(selectedSound);
     }
@@ -205,13 +200,14 @@ public class QCMFragment extends Fragment {
     public void onDestroy() {
         userRunTimeDao = null;
         scoreRunTimeDao = null;
-        dBHelper.close();
+        if (dBHelper!=null) {
+            dBHelper.close();
+        }
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
         }
-
-        Log.i(QCMFragment.class.getName(),"QCM fragment destroyed.");
+        // Log.i(QCMFragment.class.getName(),"QCM fragment destroyed.");
         super.onDestroy();
     }
 }

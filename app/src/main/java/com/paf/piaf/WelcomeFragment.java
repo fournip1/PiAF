@@ -1,19 +1,16 @@
 package com.paf.piaf;
 
-import android.media.MediaPlayer;
 import android.os.Bundle;
-
-import androidx.annotation.CallSuper;
-import androidx.annotation.MainThread;
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.CallSuper;
+import androidx.annotation.MainThread;
+import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 
@@ -22,21 +19,14 @@ public class WelcomeFragment extends Fragment {
     private User user;
     private Level presentLevel, nextLevel;
     private static final String ARG_VALIDATION_LEVEL = "isValidated";
-    private boolean validated = false;
+    private boolean validated = false, isFirst= false;
     private TextView levelTextView, targetTextView;
+    private Button playButton;
     private ImageView icon;
 
 
     public WelcomeFragment() {
         // Required empty public constructor
-    }
-
-    public static WelcomeFragment newInstance(boolean validated) {
-        WelcomeFragment fragment = new WelcomeFragment();
-        Bundle args = new Bundle();
-        args.putBoolean(ARG_VALIDATION_LEVEL, validated);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -53,6 +43,8 @@ public class WelcomeFragment extends Fragment {
         dBHelper = new DatabaseHelper(getActivity());
         user = dBHelper.getUserRuntimeDao().queryForFirst();
         nextLevel = user.getLevel();
+        isFirst = user.isFirst();
+
 
         // Inflate the layout for this fragment
         View currentView = inflater.inflate(R.layout.fragment_welcome, container, false);
@@ -60,10 +52,10 @@ public class WelcomeFragment extends Fragment {
         // We set a listener to the button
         // modify the text of the textview
         // modify the image
-        Button playButton = (Button) currentView.findViewById(R.id.playButton);
-        levelTextView = (TextView)  currentView.findViewById(R.id.levelTextView);
-        targetTextView = (TextView)  currentView.findViewById(R.id.targetTextView);
-        icon = (ImageView)  currentView.findViewById(R.id.iconUser);
+        playButton = currentView.findViewById(R.id.playButton);
+        levelTextView = currentView.findViewById(R.id.levelTextView);
+        targetTextView = currentView.findViewById(R.id.targetTextView);
+        icon = currentView.findViewById(R.id.iconUser);
 
         playButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -84,6 +76,7 @@ public class WelcomeFragment extends Fragment {
             playButton.setVisibility(View.VISIBLE);
             updateTextAndImage();
         }
+
         return currentView;
     }
 
@@ -96,6 +89,11 @@ public class WelcomeFragment extends Fragment {
         }
         levelTextView.setText(getString(R.string.level_information) + " " + nextLevel.getFrench() + ".");
         targetTextView.setText(getString(R.string.target_information_1) + " " + Long.toString(dBHelper.getTargetNextLevel()) + " " + getString(R.string.target_information_2));
+        if (isFirst) {
+            playButton.setText(getString(R.string.button_first));
+        } else {
+            playButton.setText(getString(R.string.button_play));
+        }
     }
 
     public void setPresentLevel(Level presentLevel) {
@@ -109,18 +107,24 @@ public class WelcomeFragment extends Fragment {
     }
 
     public void playQuizz() {
-
         // here, we do not use the preferences stored
         // because it did not work
         // instead we use the database
 
-        boolean isQCM = user.isQCM();
-        Log.i(MainActivity.class.getName(),"QCM before game: " + isQCM);
+        // Log.i(MainActivity.class.getName(),"QCM before game: " + isQCM);
 
-        if (isQCM) {
-            ((MainActivity) getActivity()).playQCMQuizz();
+
+        if (isFirst) {
+            isFirst = false;
+            user.setFirst(false);
+            dBHelper.getUserRuntimeDao().update(user);
+            ((MainActivity) getActivity()).showPrivacy();
         } else {
-            ((MainActivity) getActivity()).playFreeQuizz();
+            if (user.isQCM()) {
+                ((MainActivity) getActivity()).playQCMQuizz();
+            } else {
+                ((MainActivity) getActivity()).playFreeQuizz();
+            }
         }
     }
 
@@ -132,8 +136,10 @@ public class WelcomeFragment extends Fragment {
     @MainThread
     @CallSuper
     public void onDestroy() {
-        dBHelper.close();
-        Log.i(WelcomeFragment.class.getName(),"Welcome fragment destroyed.");
+        if (dBHelper!=null) {
+            dBHelper.close();
+        }
+        // Log.i(WelcomeFragment.class.getName(),"Welcome fragment destroyed.");
         super.onDestroy();
     }
 }

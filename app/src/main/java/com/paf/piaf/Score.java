@@ -15,8 +15,6 @@ public class Score {
     public final static String SCORE_FIELD_NAME = "score";
     public final static String ANSWERED_BIRD_FIELD_NAME = "answered_bird";
 
-//    0 means unanswered, 1 means correct answer and -1 means bad answer
-    final static int[] SCORES = {0,-1,1};
 
     @DatabaseField(id = true, canBeNull = false, columnName = DATE_MILLIS_FIELD_NAME)
     long dateMillis;
@@ -38,9 +36,6 @@ public class Score {
         this.dateMillis =  System.currentTimeMillis();
     }
 
-    public long getDateMillis() {
-        return dateMillis;
-    }
 
     public Sound getSound() {
         return sound;

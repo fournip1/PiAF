@@ -8,8 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,15 +26,15 @@ public class QuestionsArrayAdapter extends ArrayAdapter<Bird> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.activity_listview, parent, false);
         Bird currentBird = birds.get(position);
-        TextView firstTextViewStroke = (TextView) rowView.findViewById(R.id.firstLineStroke);
-        TextView secondTextView = (TextView) rowView.findViewById(R.id.secondLine);
-        TextView thirdTextView = (TextView) rowView.findViewById(R.id.thirdLine);
+        TextView firstTextViewStroke = rowView.findViewById(R.id.firstLineStroke);
+        TextView secondTextView = rowView.findViewById(R.id.secondLine);
+        TextView thirdTextView = rowView.findViewById(R.id.thirdLine);
 
         firstTextViewStroke.setText("");
         firstTextViewStroke.setVisibility(View.GONE);
         secondTextView.setText(currentBird.getFrench());
         thirdTextView.setText(currentBird.getLatin());
-        ImageView icon = (ImageView)  rowView.findViewById(R.id.iconList);
+        ImageView icon = rowView.findViewById(R.id.iconList);
 
         // we get the image identifier from the resources
         int imageResourceId = context.getResources().getIdentifier(currentBird.getImageBasePath(), "drawable", context.getPackageName());

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,11 +29,8 @@ public class AnswersFragment extends Fragment {
 
     private int answersDepth;
     private DatabaseHelper dBHelper;
-    private ListView answsersList;
     private TextView scoreTextView;
     private List<Score> answersScores = new ArrayList<>();
-    // private ArrayAdapter<Score> arrayAdapter;
-    private AnswersArrayAdapter arrayAdapter;
     private MediaPlayer mediaPlayer;
 
     public AnswersFragment() {
@@ -71,11 +67,11 @@ public class AnswersFragment extends Fragment {
         // Inflate the layout for this fragment
         View currentView = inflater.inflate(R.layout.fragment_answers, container, false);
 
-        answsersList = (ListView) currentView.findViewById(R.id.answersList);
-        scoreTextView = (TextView) currentView.findViewById(R.id.scoreTextView);
+        ListView answsersList = currentView.findViewById(R.id.answersList);
+        scoreTextView = currentView.findViewById(R.id.scoreTextView);
 
         // arrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.activity_listview, R.id.listTextView, answersScores);
-        arrayAdapter = new AnswersArrayAdapter(getActivity(),answersScores);
+        AnswersArrayAdapter arrayAdapter = new AnswersArrayAdapter(getActivity(),answersScores);
         answsersList.setAdapter(arrayAdapter);
         answsersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -130,13 +126,15 @@ public class AnswersFragment extends Fragment {
     @MainThread
     @CallSuper
     public void onDestroy() {
-        dBHelper.close();
+        if (dBHelper!=null) {
+            dBHelper.close();
+        }
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
         }
 
-        Log.i(AnswersFragment.class.getName(),"Answers fragment destroyed.");
+        // Log.i(AnswersFragment.class.getName(),"Answers fragment destroyed.");
         super.onDestroy();
     }
 }
