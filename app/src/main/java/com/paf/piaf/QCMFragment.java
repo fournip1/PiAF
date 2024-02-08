@@ -136,7 +136,7 @@ public class QCMFragment extends Fragment {
         if (idQuestion == nbQuestions+1) {
             stopSound();
             // we display the plain answer fragment!
-            if (dBHelper.validateLevel()) {
+            if (dBHelper.validateLevel() && !user.isFinished()) {
                 user.setLastValidationTimestamp();
                 // (AnswersFragment.class.getName(),"Level validated!");
                 if (presentLevel.getId() < levels.size()) {

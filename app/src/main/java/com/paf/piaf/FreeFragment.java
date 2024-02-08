@@ -170,7 +170,7 @@ public class FreeFragment extends Fragment {
     public void lastQuestionRoutine() {
         // we display the plain answer fragment!
         stopSound();
-        if (dBHelper.validateLevel()) {
+        if (dBHelper.validateLevel() && !user.isFinished()) {
             user.setLastValidationTimestamp();
             // Log.i(AnswersFragment.class.getName(), "Level validated!");
             if (presentLevel.getId() < levels.size()) {
