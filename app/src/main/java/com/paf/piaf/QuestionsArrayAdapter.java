@@ -1,6 +1,7 @@
 package com.paf.piaf;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,12 +9,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class QuestionsArrayAdapter extends ArrayAdapter<Bird> {
     private final Context context;
-    private List<Bird> birds = new ArrayList<>();
+    private final List<Bird> birds;
     public QuestionsArrayAdapter(Context context, List<Bird> birds) {
         super(context, -1, birds);
         this.context = context;
@@ -26,6 +26,7 @@ public class QuestionsArrayAdapter extends ArrayAdapter<Bird> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.activity_listview, parent, false);
         Bird currentBird = birds.get(position);
+        // Log.i(QuestionsArrayAdapter.class.getName(),"Inflating: " + currentBird.getFrench());
         TextView firstTextViewStroke = rowView.findViewById(R.id.firstLineStroke);
         TextView secondTextView = rowView.findViewById(R.id.secondLine);
         TextView thirdTextView = rowView.findViewById(R.id.thirdLine);

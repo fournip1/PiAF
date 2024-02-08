@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class QuizzHelper {
     private List<Sound> sounds;
     private Sound selectedSound;
-    private Random rand;
+    private final Random rand;
 
     QuizzHelper(List<Sound> sounds) {
         rand = new Random();

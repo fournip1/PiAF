@@ -118,12 +118,16 @@ public class FreeFragment extends Fragment {
     public void playSound(Sound sound) {
         int soundResourceId = getResources().getIdentifier(sound.getBasePath(), "raw", getActivity().getPackageName());
         if (soundResourceId != 0) {
-            if (mediaPlayer != null) {
-                mediaPlayer.release();
-                mediaPlayer = null;
-            }
+            stopSound();
             mediaPlayer = MediaPlayer.create(getActivity(), soundResourceId);
             mediaPlayer.start(); // no need to call prepare(); create() does that for you
+        }
+    }
+
+    public void stopSound() {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
         }
     }
 
@@ -165,13 +169,17 @@ public class FreeFragment extends Fragment {
 
     public void lastQuestionRoutine() {
         // we display the plain answer fragment!
+        stopSound();
         if (dBHelper.validateLevel()) {
             user.setLastValidationTimestamp();
             // Log.i(AnswersFragment.class.getName(), "Level validated!");
             if (presentLevel.getId() < levels.size()) {
                 user.setLevel(dBHelper.getLevelRuntimeDao().queryForId(presentLevel.getId() + 1));
-                userRunTimeDao.update(user);
+            } else {
+                // user has finished the game
+                user.setFinished(true);
             }
+            userRunTimeDao.update(user);
             ((MainActivity) getActivity()).showFiestaWelcome(idQuestion - 1, presentLevel);
         } else {
             ((MainActivity) getActivity()).showAnswers(idQuestion - 1);
@@ -232,10 +240,7 @@ public class FreeFragment extends Fragment {
         if (dBHelper!=null) {
             dBHelper.close();
         }
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
+        stopSound();
         // Log.i(FreeFragment.class.getName(), "Free fragment destroyed.");
         super.onDestroy();
     }

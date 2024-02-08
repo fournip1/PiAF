@@ -100,12 +100,16 @@ public class QCMFragment extends Fragment {
     public void playSound(Sound sound) {
         int soundResourceId = getResources().getIdentifier(sound.getBasePath(), "raw", getActivity().getPackageName());
         if (soundResourceId != 0) {
-            if (mediaPlayer != null) {
-                mediaPlayer.release();
-                mediaPlayer = null;
-            }
+            stopSound();
             mediaPlayer = MediaPlayer.create(getActivity(), soundResourceId);
             mediaPlayer.start(); // no need to call prepare(); create() does that for you
+        }
+    }
+
+    public void stopSound() {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
         }
     }
 
@@ -130,14 +134,19 @@ public class QCMFragment extends Fragment {
         // if this is the last question, we quit.
         // if it is the last but one question, we change the text of the button.
         if (idQuestion == nbQuestions+1) {
+            stopSound();
             // we display the plain answer fragment!
             if (dBHelper.validateLevel()) {
                 user.setLastValidationTimestamp();
                 // (AnswersFragment.class.getName(),"Level validated!");
                 if (presentLevel.getId() < levels.size()) {
                     user.setLevel(dBHelper.getLevelRuntimeDao().queryForId(presentLevel.getId()+1));
-                    userRunTimeDao.update(user);
+                } else {
+                    // user has finished the game
+                    user.setFinished(true);
                 }
+                // we update the user
+                userRunTimeDao.update(user);
                 ((MainActivity) getActivity()).showFiestaWelcome(idQuestion-1, presentLevel);
             } else {
                 ((MainActivity) getActivity()).showAnswers(idQuestion-1);
@@ -155,12 +164,6 @@ public class QCMFragment extends Fragment {
         selectedBirds.clear();
         selectedBirds.addAll(quizzHelper.getBirds(nbChoices));
         arrayAdapter.notifyDataSetChanged();
-/*        ("Selected sound", "Sound name: " + selectedSound.toString());
-        (QuizzActivity.class.getName(), "Bird 1: " + selectedBirds.get(0).toString());
-        (QuizzActivity.class.getName(), "Bird 2: " + selectedBirds.get(1).toString());
-        (QuizzActivity.class.getName(), "Bird 3: " + selectedBirds.get(2).toString());
-        (QuizzActivity.class.getName(), "Bird 4: " + selectedBirds.get(3).toString());
-        (QCMFragment.class.getName(), "Remaining sounds: " + soundsByLevel.size());*/
         idQuestion++;
         playSound(selectedSound);
     }
@@ -203,10 +206,7 @@ public class QCMFragment extends Fragment {
         if (dBHelper!=null) {
             dBHelper.close();
         }
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
+        stopSound();
         // Log.i(QCMFragment.class.getName(),"QCM fragment destroyed.");
         super.onDestroy();
     }

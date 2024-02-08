@@ -1,11 +1,12 @@
 package com.paf.piaf;
 
+import static java.util.Comparator.comparing;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -16,8 +17,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -29,20 +32,16 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
     // name of the database file for your application -- change to something appropriate for your app
     private static final String DATABASE_NAME = "piaf.db";
     // any time you make changes to your database objects, you may have to increase the database version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // the DAO object we use to access the SimpleData table
-    private Dao<Level, Integer> levelDao = null;
-    private Dao<Bird, Integer> birdDao = null;
-    private Dao<Sound, Integer> soundDao = null;
-    private Dao<Score, Long> scoreDao = null;
-    private Dao<User, Integer> userDao = null;
 
     private RuntimeExceptionDao<Level, Integer> levelRuntimeDao = null;
-    private RuntimeExceptionDao<Bird, Integer> birdRuntimeDao = null;
     private RuntimeExceptionDao<Sound, Integer> soundRuntimeDao = null;
     private RuntimeExceptionDao<Score, Long> scoreRuntimeDao = null;
     private RuntimeExceptionDao<User, Integer> userRuntimeDao = null;
+    private RuntimeExceptionDao<Bird, Integer> birdRuntimeDao = null;
+
     private Context mContext;
 
     public DatabaseHelper(Context context) {
@@ -69,6 +68,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
             throw new RuntimeException(e);
         }
 
+        populateBirdsSoundsLevels();
+
+        // here we create the default app user
+        Level level = getLevelRuntimeDao().queryForFirst();
+        User user = new User(true,false,true,level, 10, 4);
+        getUserRuntimeDao().create(user);
+    }
+
+    public void populateBirdsSoundsLevels() {
         // we set the user DAO
         RuntimeExceptionDao<User, Integer> userDao = getUserRuntimeDao();
 
@@ -119,11 +127,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
             Log.e(this.getClass().getName(), "Sounds insertion went wrong");
             e.printStackTrace();
         }
-
-        // here we create the default app user
-        Level level = getLevelRuntimeDao().queryForFirst();
-        User user = new User(true,true,level, 10, 4);
-        userDao.create(user);
     }
 
     /**
@@ -134,55 +137,22 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
             // we want the user and the scores to be kept
-            // Log.i(DatabaseHelper.class.getName(), "onUpgrade");
+            Log.i(DatabaseHelper.class.getName(), "onUpgrade");
             TableUtils.dropTable(connectionSource, Bird.class, true);
             TableUtils.dropTable(connectionSource, Sound.class, true);
-            onCreate(db, connectionSource);
+            TableUtils.dropTable(connectionSource, Level.class, true);
+
+            if (oldVersion<2) {
+                getScoreRuntimeDao().executeRaw("ALTER TABLE `user` ADD COLUMN finished SMALLINT NOT NULL DEFAULT 0;");
+            }
+            populateBirdsSoundsLevels();
+
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Can't drop databases", e);
             throw new RuntimeException(e);
         }
     }
 
-    /**
-     * Returns the Database Access Object (DAO) for our classes. It will create it or just give the cached
-     * value.
-     */
-
-    public Dao<Level, Integer> getLevelDao() throws SQLException {
-        if (levelDao == null) {
-            levelDao = getDao(Level.class);
-        }
-        return levelDao;
-    }
-
-    public Dao<Bird, Integer> getBirdDao() throws SQLException {
-        if (birdDao == null) {
-            birdDao = getDao(Bird.class);
-        }
-        return birdDao;
-    }
-
-    public Dao<Sound, Integer> getSoundDao() throws SQLException {
-        if (soundDao == null) {
-            soundDao = getDao(Sound.class);
-        }
-        return soundDao;
-    }
-
-    public Dao<Score, Long> getScoreDao() throws SQLException {
-        if (scoreDao == null) {
-            scoreDao = getDao(Score.class);
-        }
-        return scoreDao;
-    }
-
-    public Dao<User, Integer> getUserDao() throws SQLException {
-        if (userDao == null) {
-            userDao = getDao(User.class);
-        }
-        return userDao;
-    }
 
 
     /**
@@ -197,12 +167,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         return levelRuntimeDao;
     }
 
-    public RuntimeExceptionDao<Bird, Integer> getBirdRuntimeDao() {
-        if (birdRuntimeDao == null) {
-            birdRuntimeDao = getRuntimeExceptionDao(Bird.class);
-        }
-        return birdRuntimeDao;
-    }
 
     public RuntimeExceptionDao<Sound, Integer> getSoundRuntimeDao() {
         if (soundRuntimeDao == null) {
@@ -225,10 +189,17 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         return userRuntimeDao;
     }
 
-    public long getTargetNextLevel() {
+    public RuntimeExceptionDao<Bird, Integer> getBirdRuntimeDao() {
+        if (birdRuntimeDao == null) {
+            birdRuntimeDao = getRuntimeExceptionDao(Bird.class);
+        }
+        return birdRuntimeDao;
+    }
+
+    public float getTargetVicinity() {
         Float fMaxErrors = (Score.SCORES_DEPTH*(100-Score.VALIDATION_PERCENTAGE)/100);
         Long maxErrors = fMaxErrors.longValue();
-        Long lastValidationTimestamp = userRuntimeDao.queryForFirst().getLastValidationTimestamp();
+        Long lastValidationTimestamp = getUserRuntimeDao().queryForFirst().getLastValidationTimestamp();
         // Log.i(DatabaseHelper.class.getName(),"Maximum erreurs: " + maxErrors);
         int i=0;
         int e=0;
@@ -243,11 +214,19 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
             // Log.i(DatabaseHelper.class.getName(),"valeur de e:" + e);
             i++;
         }
-        // Case where we reach the bottom of the list
-        if (i==lastScores.size() && e!=maxErrors+1) {
-            i++;
-        }
-        return Score.SCORES_DEPTH+1-i;
+
+        return (float) (Score.SCORES_DEPTH+1-i)/Score.SCORES_DEPTH;
+    }
+
+    public List<Bird> getBirds() {
+        Level level = getUserRuntimeDao().queryForFirst().getLevel();
+        Set<Bird> hBirds = getSoundRuntimeDao().queryForAll().stream()
+                .filter((s)->(s.getLevel().getId() <= level.getId()))
+                .map(Sound::getBird)
+                .collect(Collectors.toSet());
+        return hBirds.stream()
+                .sorted(comparing(Bird::getFrenchNonAccentuated))
+                .collect(Collectors.toList());
     }
 
     public boolean validateLevel() {
@@ -255,7 +234,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         List<Score> lastScores = getLastScores(Score.SCORES_DEPTH);
         Long totalScore = lastScores.stream()
                 .filter((s) -> (s.getScore() == 1))
-                .filter((s) -> (s.dateMillis > userRuntimeDao.queryForFirst().getLastValidationTimestamp()))
+                .filter((s) -> (s.dateMillis > getUserRuntimeDao().queryForFirst().getLastValidationTimestamp()))
                 .count();
         float percentageValidated = (float) 100 * totalScore / Score.SCORES_DEPTH;
         // Log.i(DatabaseHelper.class.getName(), "Percentage validated: " + percentageValidated);
@@ -282,14 +261,30 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         }
         return lastScores;
     }
+    
+    public List<Sound> getSoundsByBirdAndLevel(int birdId, int levelId) {
+        Bird bird = getBirdRuntimeDao().queryForId(birdId);
+        Level level = getLevelRuntimeDao().queryForId(levelId);
 
+        List<Sound> sounds = bird.getSounds().stream()
+                .filter((s) -> (s.getLevel().getId() <= levelId))
+                .sorted(comparing(Sound::getType))
+                .collect(Collectors.toList());
+
+        if (!bird.getAudioDescriptionPath().equals("")) {
+            Sound descSound = new Sound(Bird.DESCRIPTION_NAME,bird.getAudioDescriptionPath(),level,bird);
+            sounds.add(0,descSound);
+        }
+        return sounds;
+    }
+    
     public List<Sound> getSoundsByLevel(Level level) {
-        int idLevel = level.getId();
+        int levelId = level.getId();
         List<Sound> sounds = new ArrayList<>();
         try {
             sounds = getSoundRuntimeDao().queryBuilder()
                     .where()
-                    .le(Sound.LEVEL_FIELD_NAME, idLevel)
+                    .le(Sound.LEVEL_FIELD_NAME, levelId)
                     .query();
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Error in the SQL Query to get the sounds for a given level.");
@@ -303,6 +298,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         RuntimeExceptionDao<User, Integer> userDao = getUserRuntimeDao();
         User user = userDao.queryForFirst();
         user.setLevel(level);
+        user.setFinished(false);
         userDao.update(user);
 
         // we reset the scores
@@ -314,16 +310,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
      */
     @Override
     public void close() {
-        levelDao = null;
-        birdDao = null;
-        soundDao = null;
-        scoreDao = null;
-        userDao = null;
         levelRuntimeDao = null;
-        birdRuntimeDao = null;
         soundRuntimeDao = null;
         scoreRuntimeDao = null;
         userRuntimeDao = null;
+        birdRuntimeDao = null;
         // Log.i(DatabaseHelper.class.getName(),"Closing database.");
         super.close();
     }

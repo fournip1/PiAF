@@ -15,10 +15,10 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 
 public class WelcomeFragment extends Fragment {
+    private static final String ARG_VALIDATION_LEVEL = "isValidated";
     private DatabaseHelper dBHelper;
     private User user;
-    private Level presentLevel, nextLevel;
-    private static final String ARG_VALIDATION_LEVEL = "isValidated";
+    private Level pastLevel, currentLevel;
     private boolean validated = false, isFirst= false;
     private TextView levelTextView, targetTextView;
     private Button playButton;
@@ -41,10 +41,7 @@ public class WelcomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         dBHelper = new DatabaseHelper(getActivity());
-        user = dBHelper.getUserRuntimeDao().queryForFirst();
-        nextLevel = user.getLevel();
-        isFirst = user.isFirst();
-
+        
 
         // Inflate the layout for this fragment
         View currentView = inflater.inflate(R.layout.fragment_welcome, container, false);
@@ -62,48 +59,60 @@ public class WelcomeFragment extends Fragment {
                 playQuizz();
             }
         });
+        
+        updateTextAndImage();
+        return currentView;
+    }
 
-        if (validated) {
+    public void updateTextAndImage() {
+        user = dBHelper.getUserRuntimeDao().queryForFirst();
+        currentLevel = user.getLevel();
+        isFirst = user.isFirst();
+
+        if (validated && !user.isFinished()) {
             playButton.setVisibility(View.GONE);
-            int levelValidationImageResourceId = getActivity().getResources().getIdentifier(presentLevel.getLevelValidationImageBasePath(), "drawable", getActivity().getPackageName());
+            int levelValidationImageResourceId = getActivity().getResources().getIdentifier(pastLevel.getLevelValidationImageBasePath(), "drawable", getActivity().getPackageName());
             if (levelValidationImageResourceId != 0) {
                 Glide.with(this).load(levelValidationImageResourceId).into(icon);
             } else {
                 icon.setImageResource(getActivity().getResources().getIdentifier("standard_bird","drawable",getActivity().getPackageName()));
             }
-            levelTextView.setText(getString(R.string.level_validation) + " " + presentLevel.getFrench() + "!");
+            levelTextView.setText(getString(R.string.level_validation) + " " + pastLevel.getFrench() + "!");
         } else {
             playButton.setVisibility(View.VISIBLE);
-            updateTextAndImage();
-        }
+            int imageResourceId = getActivity().getResources().getIdentifier(currentLevel.getImageBasePath(), "drawable", getActivity().getPackageName());
+            if (imageResourceId != 0) {
+                icon.setImageResource(imageResourceId);
+            } else {
+                icon.setImageResource(getActivity().getResources().getIdentifier("standard_bird","drawable",getActivity().getPackageName()));
+            }
 
-        return currentView;
+            levelTextView.setText(getString(R.string.level_information) + " " + currentLevel.getFrench() + ".");
+
+            if (!user.isFinished()) {
+                // targetTextView.setText(getString(R.string.target_information_1) + " " + Long.toString(dBHelper.getTargetNextLevel()) + " " + getString(R.string.target_information_2));
+                float vicinity  = dBHelper.getTargetVicinity();
+                if (vicinity<0.25) {
+                    targetTextView.setText(getString(R.string.target_close));
+                } else if (vicinity<0.5) {
+                    targetTextView.setText(getString(R.string.target_mid));
+                } else {
+                    targetTextView.setText(getString(R.string.target_far));
+                }
+            } else {
+                targetTextView.setText(getString(R.string.target_reached));
+            }
+
+            if (isFirst) {
+                playButton.setText(getString(R.string.button_first));
+            } else {
+                playButton.setText(getString(R.string.button_play));
+            }
+        }
     }
 
-    public void updateTextAndImage() {
-        int imageResourceId = getActivity().getResources().getIdentifier(nextLevel.getImageBasePath(), "drawable", getActivity().getPackageName());
-        if (imageResourceId != 0) {
-            icon.setImageResource(imageResourceId);
-        } else {
-            icon.setImageResource(getActivity().getResources().getIdentifier("standard_bird","drawable",getActivity().getPackageName()));
-        }
-        levelTextView.setText(getString(R.string.level_information) + " " + nextLevel.getFrench() + ".");
-        targetTextView.setText(getString(R.string.target_information_1) + " " + Long.toString(dBHelper.getTargetNextLevel()) + " " + getString(R.string.target_information_2));
-        if (isFirst) {
-            playButton.setText(getString(R.string.button_first));
-        } else {
-            playButton.setText(getString(R.string.button_play));
-        }
-    }
-
-    public void setPresentLevel(Level presentLevel) {
-        this.presentLevel = presentLevel;
-    }
-
-    public void setNextLevel(Level nextLevel) {
-        this.nextLevel = nextLevel;
-        // we update as well the text and images
-        updateTextAndImage();
+    public void setPastLevel(Level pastLevel) {
+        this.pastLevel = pastLevel;
     }
 
     public void playQuizz() {

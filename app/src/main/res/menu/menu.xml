@@ -25,4 +25,8 @@
         android:id="@+id/item_reset"
         android:title="@string/menu_item_reset"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/item_catalog"
+        android:title="@string/menu_item_catalog"
+        app:showAsAction="never" />
 </menu>

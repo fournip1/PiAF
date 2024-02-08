@@ -10,12 +10,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AnswersArrayAdapter extends ArrayAdapter<Score> {
     private final Context context;
-    private List<Score> scores = new ArrayList<>();
+    private final List<Score> scores;
     public AnswersArrayAdapter(Context context, List<Score> scores) {
         super(context, -1, scores);
         this.context = context;

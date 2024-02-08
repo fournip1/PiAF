@@ -12,6 +12,7 @@
     <string name="menu_item_reset">Réinitialiser</string>
     <string name="menu_item_about">A propos</string>
     <string name="menu_item_privacy">Confidentialité</string>
+    <string name="menu_item_catalog">Catalogue d\'oiseaux</string>
     <string name="game_preferences_header">Jeu</string>
     <string name="icon_mystery_bird">Oiseau mystère</string>
     <string name="quizz_duration">Combien de temps avez-vous?</string>
@@ -22,6 +23,10 @@
     <string name="level_information">Vous êtes au niveau </string>
     <string name="target_information_1">Plus que </string>
     <string name="target_information_2"> bonnes réponses avant validation.</string>
+    <string name="target_close">Vous êtes chaud.</string>
+    <string name="target_mid">Vous êtes tiède.</string>
+    <string name="target_far">Vous êtes froid.</string>
+    <string name="target_reached">Vous avez fini le jeu!</string>
     <string name="level_validation">Vous avez validé le niveau </string>
     <string name="free_question">Qui suis-je?</string>
     <string name="free_answer">Mon nom:</string>
@@ -31,9 +36,7 @@
     <string name="answer_explanation">A droite: je le savais.\nA gauche: je ne le savais pas.</string>
     <string name="score_text">Votre score:</string>
     <string name="sound_credit">Credit sonore:</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="dialog_reset_game">Réinitialiser le jeu?</string>
     <string name="confirm">Confirmer</string>
     <string name="cancel">Annuler</string>
-
 </resources>

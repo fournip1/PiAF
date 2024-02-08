@@ -25,7 +25,6 @@ public class ShowTextFragment extends Fragment {
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
     public static ShowTextFragment newInstance(String textId) {
         ShowTextFragment fragment = new ShowTextFragment();
         Bundle args = new Bundle();

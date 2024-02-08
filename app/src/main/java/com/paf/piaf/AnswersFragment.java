@@ -1,8 +1,6 @@
 package com.paf.piaf;
 
-import android.content.Intent;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +28,7 @@ public class AnswersFragment extends Fragment {
     private int answersDepth;
     private DatabaseHelper dBHelper;
     private TextView scoreTextView;
-    private List<Score> answersScores = new ArrayList<>();
+    private final List<Score> answersScores = new ArrayList<>();
     private MediaPlayer mediaPlayer;
 
     public AnswersFragment() {
@@ -67,13 +65,13 @@ public class AnswersFragment extends Fragment {
         // Inflate the layout for this fragment
         View currentView = inflater.inflate(R.layout.fragment_answers, container, false);
 
-        ListView answsersList = currentView.findViewById(R.id.answersList);
+        ListView answsersListView = currentView.findViewById(R.id.answersList);
         scoreTextView = currentView.findViewById(R.id.scoreTextView);
 
         // arrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.activity_listview, R.id.listTextView, answersScores);
         AnswersArrayAdapter arrayAdapter = new AnswersArrayAdapter(getActivity(),answersScores);
-        answsersList.setAdapter(arrayAdapter);
-        answsersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        answsersListView.setAdapter(arrayAdapter);
+        answsersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
@@ -82,13 +80,13 @@ public class AnswersFragment extends Fragment {
             }
         });
 
-        answsersList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        answsersListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
-                Object object = parent.getItemAtPosition(position);
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(((Score) object).getSound().getBird().getUrl()));
-                startActivity(browserIntent);
+                stopSound();
+                Bird selectedBird = ((Score) parent.getItemAtPosition(position)).getSound().getBird();
+                ((MainActivity) getActivity()).showBirdCard(selectedBird.getId(),dBHelper.getUserRuntimeDao().queryForFirst().getLevel().getId());
                 return true;
             }
         });
@@ -107,18 +105,21 @@ public class AnswersFragment extends Fragment {
                 .filter((s) -> (s.getScore() == 1))
                 .count();
         scoreTextView.setText(getString(R.string.score_text) + " " + String.valueOf(g) +"/" + String.valueOf(answersDepth));
-
     }
 
     public void playSound(Sound sound) {
         int soundResourceId = getResources().getIdentifier(sound.getBasePath(), "raw", getActivity().getPackageName());
         if (soundResourceId != 0) {
-            if (mediaPlayer != null) {
-                mediaPlayer.release();
-                mediaPlayer = null;
-            }
+            stopSound();
             mediaPlayer = MediaPlayer.create(getActivity(), soundResourceId);
             mediaPlayer.start(); // no need to call prepare(); create() does that for you
+        }
+    }
+
+    public void stopSound() {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
         }
     }
 
