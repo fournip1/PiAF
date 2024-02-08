@@ -104,7 +104,25 @@ public class AnswersFragment extends Fragment {
         long g = answersScores.stream()
                 .filter((s) -> (s.getScore() == 1))
                 .count();
-        scoreTextView.setText(getString(R.string.score_text) + " " + String.valueOf(g) +"/" + String.valueOf(answersDepth));
+        scoreTextView.setText(getScoreSentence(g));
+    }
+
+    private String getScoreSentence(long g) {
+        StringBuilder sentence = new StringBuilder();
+        if ((float) g/answersDepth>0.8) {
+            sentence.append(getString(R.string.great_score_text));
+        } else if ((float) g/answersDepth>0.6) {
+            sentence.append(getString(R.string.good_score_text));
+        } else {
+            sentence.append(getString(R.string.normal_score_text));
+        }
+        sentence.append(" ");
+        sentence.append(g);
+        sentence.append("/");
+        sentence.append(answersDepth);
+
+        return sentence.toString();
+        // return getString(R.string.score_text) + " " + String.valueOf(g) +"/" + String.valueOf(answersDepth);
     }
 
     public void playSound(Sound sound) {

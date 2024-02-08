@@ -69,7 +69,7 @@ public class WelcomeFragment extends Fragment {
         currentLevel = user.getLevel();
         isFirst = user.isFirst();
 
-        if (validated && !user.isFinished()) {
+        if (validated) {
             playButton.setVisibility(View.GONE);
             int levelValidationImageResourceId = getActivity().getResources().getIdentifier(pastLevel.getLevelValidationImageBasePath(), "drawable", getActivity().getPackageName());
             if (levelValidationImageResourceId != 0) {
@@ -77,7 +77,12 @@ public class WelcomeFragment extends Fragment {
             } else {
                 icon.setImageResource(getActivity().getResources().getIdentifier("standard_bird","drawable",getActivity().getPackageName()));
             }
-            levelTextView.setText(getString(R.string.level_validation) + " " + pastLevel.getFrench() + "!");
+            if (user.isFinished()) {
+                levelTextView.setText(getString(R.string.game_won));
+            } else {
+                levelTextView.setText(getString(R.string.level_validation) + " " + pastLevel.getFrench() + "!");
+            }
+
         } else {
             playButton.setVisibility(View.VISIBLE);
             int imageResourceId = getActivity().getResources().getIdentifier(currentLevel.getImageBasePath(), "drawable", getActivity().getPackageName());
