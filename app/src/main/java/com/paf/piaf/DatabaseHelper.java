@@ -72,7 +72,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
 
         // here we create the default app user
         Level level = getLevelRuntimeDao().queryForFirst();
-        User user = new User(true,false,true,level, 10, 4);
+        User user = new User(true,false,true, true, level, 10, 4);
         getUserRuntimeDao().create(user);
     }
 
@@ -137,23 +137,21 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
             // we want the user and the scores to be kept
-            Log.i(DatabaseHelper.class.getName(), "onUpgrade");
+            Log.i(DatabaseHelper.class.getName(), "Upgrading database");
             TableUtils.dropTable(connectionSource, Bird.class, true);
             TableUtils.dropTable(connectionSource, Sound.class, true);
             TableUtils.dropTable(connectionSource, Level.class, true);
 
             if (oldVersion<2) {
                 getScoreRuntimeDao().executeRaw("ALTER TABLE `user` ADD COLUMN finished SMALLINT NOT NULL DEFAULT 0;");
+                getScoreRuntimeDao().executeRaw("ALTER TABLE `user` ADD COLUMN warning SMALLINT NOT NULL DEFAULT 1;");
             }
             populateBirdsSoundsLevels();
-
         } catch (SQLException e) {
-            Log.e(DatabaseHelper.class.getName(), "Can't drop databases", e);
+            Log.e(DatabaseHelper.class.getName(), "Can't update database", e);
             throw new RuntimeException(e);
         }
     }
-
-
 
     /**
      * Returns the RuntimeExceptionDao (Database Access Object) version of a Dao for our classes. It will

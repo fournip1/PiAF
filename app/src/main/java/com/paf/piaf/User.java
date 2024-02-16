@@ -9,10 +9,13 @@ public class User {
     public final static String QCM_FIELD_NAME = "qcm";
     public final static String FIRST_FIELD_NAME = "first";
     public final static String FINISHED_FIELD_NAME = "finished";
+    public final static String WARNING_FIELD_NAME = "warning";
+
     public final static String LEVEL_FIELD_NAME = "level";
     public final static String NB_QUESTIONS_FIELD_NAME = "nb_questions";
     public final static String NB_CHOICES_FIELD_NAME = "nb_choices";
     public final static String LAST_VALIDATION_FIELD_NAME = "last_validation_timestamp";
+
 
 
 
@@ -24,6 +27,9 @@ public class User {
     @DatabaseField(canBeNull = false, columnName = QCM_FIELD_NAME)
     private boolean finished;
     @DatabaseField(canBeNull = false, columnName = FINISHED_FIELD_NAME)
+    private boolean warning;
+    @DatabaseField(canBeNull = false, columnName = WARNING_FIELD_NAME)
+
     private boolean QCM;
     // this is the difficulty level
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = LEVEL_FIELD_NAME)
@@ -44,11 +50,12 @@ public class User {
         // needed by ormlite
     }
 
-    public User(boolean first, boolean finished, boolean QCM, Level level, int nbQuestions, int nbChoices) {
+    public User(boolean first, boolean finished, boolean warning, boolean QCM, Level level, int nbQuestions, int nbChoices) {
         this.level = level;
         this.QCM = QCM;
         this.first = first;
         this.finished = finished;
+        this.warning = warning;
         this.nbQuestions = nbQuestions;
         this.nbChoices = nbChoices;
         this.lastValidationTimestamp = System.currentTimeMillis();
@@ -66,6 +73,11 @@ public class User {
         return finished;
     }
 
+    public boolean isWarning() {
+        return warning;
+    }
+
+
     public void setQCM(boolean QCM) {
         this.QCM = QCM;
     }
@@ -76,6 +88,10 @@ public class User {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    public void setWarning(boolean warning) {
+        this.warning = warning;
     }
 
     public Level getLevel() {

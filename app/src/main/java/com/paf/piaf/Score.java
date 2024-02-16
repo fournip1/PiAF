@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @DatabaseTable(tableName = "scores")
 public class Score {
-    public final static Long SCORES_DEPTH = 10L;
+    public final static Long SCORES_DEPTH = 40L;
     public final static float VALIDATION_PERCENTAGE = 90;
     public final static String DATE_MILLIS_FIELD_NAME = "date_millis";
     public final static String SOUND_FIELD_NAME = "sound";

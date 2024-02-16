@@ -24,11 +24,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
         SwitchPreferenceCompat QCMPreference = findPreference("qcm_mode");
+        SwitchPreferenceCompat warningPreference = findPreference("warning");
+
         ListPreference numberOfQuestions = findPreference("nb_questions");
         ListPreference numberOfChoices = findPreference("nb_choices");
 
         // we first set the value from the user's value
         QCMPreference.setChecked(user.isQCM());
+        warningPreference.setChecked(user.isWarning());
         numberOfQuestions.setValue(String.valueOf(user.getNbQuestions()));
         numberOfChoices.setValue(String.valueOf(user.getNbChoices()));
 
@@ -38,6 +41,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                               Object newValue) {
                 // Log.i(SettingsFragment.class.getName(),"QCM chosen: "+ newValue);
                 user.setQCM((boolean) newValue);
+                userRuntimeExceptionDao.update(user);
+                return true;
+            }
+        });
+
+        warningPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                // Log.i(SettingsFragment.class.getName(),"QCM chosen: "+ newValue);
+                user.setWarning((boolean) newValue);
                 userRuntimeExceptionDao.update(user);
                 return true;
             }

@@ -70,11 +70,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateWelcomeTextAndImages() {
         welcomeFragment.updateTextAndImage();
-
-/*        fragmentManager
-                .beginTransaction()
-                .replace(R.id.fragmentContainerView, welcomeFragment, null)
-                .commit();*/
     }
 
     @Override

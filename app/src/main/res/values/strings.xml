@@ -16,7 +16,7 @@
     <string name="game_preferences_header">Jeu</string>
     <string name="icon_mystery_bird">Oiseau mystère</string>
     <string name="quizz_duration">Combien de temps avez-vous?</string>
-    <string name="quizz_choices">Combien de propositions pour le QCM?</string>
+    <string name="quizz_choices">Propositions pour le QCM?</string>
     <string name="qcm_mode">Jouer en mode QCM?</string>
     <string name="qcm_mode_on">QCM activé</string>
     <string name="qcm_mode_off">Mode libre activé.</string>
@@ -40,6 +40,12 @@
     <string name="good_score_text">Bien joué! Vous avez </string>
     <string name="sound_credit">Credit sonore:</string>
     <string name="dialog_reset_game">Réinitialiser le jeu?</string>
+    <string name="dialog_warning">Vous n\'avez pas choisi de réponse.</string>
     <string name="confirm">Confirmer</string>
+    <string name="all_right">Entendu</string>
+    <string name="not_again">Ne plus afficher</string>
     <string name="cancel">Annuler</string>
+    <string name="warning">Avertissement pour le QCM?</string>
+    <string name="warning_on">Afficher</string>
+    <string name="warning_off">Ne pas afficher</string>
 </resources>

@@ -70,7 +70,13 @@ public class QCMFragment extends Fragment {
         //
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                next();
+                if (selectedBird==null && user.isWarning()) {
+                    WarningFragment warningFragment = new WarningFragment();
+                    warningFragment.show(((MainActivity) getActivity()).getSupportFragmentManager(),null);
+                    user = userRunTimeDao.queryForFirst();
+                } else {
+                    next();
+                }
             }
         });
 
@@ -166,6 +172,7 @@ public class QCMFragment extends Fragment {
         arrayAdapter.notifyDataSetChanged();
         idQuestion++;
         playSound(selectedSound);
+        selectedBird = null;
     }
 
     public void initializeQuizz() {
@@ -195,6 +202,7 @@ public class QCMFragment extends Fragment {
         selectedBirds.addAll(quizzHelper.getBirds(nbChoices));
         idQuestion++;
         playSound(selectedSound);
+        selectedBird = null;
     }
 
     @Override

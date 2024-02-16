@@ -29,6 +29,14 @@
             app:summaryOff="@string/qcm_mode_off"
             app:summaryOn="@string/qcm_mode_on"
             app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            app:key="warning"
+            app:title="@string/warning"
+            app:summaryOff="@string/warning_off"
+            app:summaryOn="@string/warning_on"
+            app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>
