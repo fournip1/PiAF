@@ -1,5 +1,6 @@
 package com.paf.piaf;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolBar = findViewById(R.id.toolbar);
         setSupportActionBar(toolBar);
+
 
 /*        // this is to have a back button
         ActionBar actionBar = getActionBar();

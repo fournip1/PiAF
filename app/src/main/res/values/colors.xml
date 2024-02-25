@@ -11,7 +11,14 @@
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
+    <color name="paf_white">#F0FFF0</color>
     <color name="paf_green">#548157</color>
+    <color name="paf_primary">#283E29</color>
+    <color name="paf_success">#74E37B</color>
+    <color name="paf_error">#FF979B</color>
+    <color name="paf_selection">#548157</color>
+    <color name="paf_secondary">#91B893</color>
+    <color name="paf_ripple">#B4CFB6</color>
     <color name="paf_blue">#575481</color>
     <color name="paf_pink">#815754</color>
 </resources>

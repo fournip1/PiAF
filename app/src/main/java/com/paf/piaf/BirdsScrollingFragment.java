@@ -41,13 +41,12 @@ public class BirdsScrollingFragment extends Fragment {
         ArrayAdapter<Bird> arrayAdapter = new QuestionsArrayAdapter(getActivity(), selectedBirds);
         birdsList.setAdapter(arrayAdapter);
 
-        birdsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        birdsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, final View view,
+            public void onItemClick(AdapterView<?> parent, final View view,
                                            int position, long id) {
                 Bird selectedBird = ((Bird) parent.getItemAtPosition(position));
                 ((MainActivity) getActivity()).showBirdCard(selectedBird.getId(),dBHelper.getUserRuntimeDao().queryForFirst().getLevel().getId());
-                return true;
             }
         });
         initializeBirds();

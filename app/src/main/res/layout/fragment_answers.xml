@@ -9,6 +9,7 @@
 
     <TextView
         android:id="@+id/scoreTextView"
+        android:textColor="@color/paf_white"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"

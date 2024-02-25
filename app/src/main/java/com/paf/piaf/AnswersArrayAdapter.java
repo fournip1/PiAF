@@ -53,17 +53,17 @@ public class AnswersArrayAdapter extends ArrayAdapter<Score> {
 
         // we want the text to be green if fine and red if not.
         if (currentScore.getScore()==1) {
-            secondTextView.setTextColor(Color.GREEN);
-            thirdTextView.setTextColor(Color.GREEN);
+            secondTextView.setTextColor(context.getResources().getColor(R.color.paf_success));
+            thirdTextView.setTextColor(context.getResources().getColor(R.color.paf_success));
         } else
         {
             if (currentScore.getAnsweredBird()!=null) {
                 firstTextViewStroke.setVisibility(View.VISIBLE);
                 firstTextViewStroke.setText(currentScore.getAnsweredBird().getFrench());
-                firstTextViewStroke.setTextColor(Color.RED);
+                firstTextViewStroke.setTextColor(context.getResources().getColor(R.color.paf_error));
             }
-            secondTextView.setTextColor(Color.RED);
-            thirdTextView.setTextColor(Color.RED);
+            secondTextView.setTextColor(context.getResources().getColor(R.color.paf_error));
+            thirdTextView.setTextColor(context.getResources().getColor(R.color.paf_error));
         }
         return rowView;
     }
