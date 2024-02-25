@@ -210,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    // TODO: create distinct backstacks: one for the usual game process and the other one for the birds catalog
     @Override
     public void onBackPressed() {
         if (fragmentManager.findFragmentByTag(CARD_FRAGMENTS_TAG) != null) {
