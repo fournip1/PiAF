@@ -18,7 +18,7 @@ public class WarningFragment extends DialogFragment {
         dBHelper = new DatabaseHelper(getActivity());
         user = dBHelper.getUserRuntimeDao().queryForFirst();
         // Use the Builder class for convenient dialog construction
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),R.style.PafDialog);
         builder.setMessage(R.string.dialog_warning)
                 .setPositiveButton(R.string.all_right, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

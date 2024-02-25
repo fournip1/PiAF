@@ -16,7 +16,7 @@ public class ResetFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         dBHelper = new DatabaseHelper(getActivity());
         // Use the Builder class for convenient dialog construction
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),R.style.PafDialog);
         builder.setMessage(R.string.dialog_reset_game)
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

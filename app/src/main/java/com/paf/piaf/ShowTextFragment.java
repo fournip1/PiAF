@@ -1,5 +1,6 @@
 package com.paf.piaf;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -48,6 +49,7 @@ public class ShowTextFragment extends Fragment {
         View currentView = inflater.inflate(R.layout.fragment_show_text, container, false);
         // init webView
         WebView webView = currentView.findViewById(R.id.htmlView);
+        webView.setBackgroundColor(Color.TRANSPARENT);
         // displaying content in WebView from html file that stored in assets folder
         webView.loadUrl("file:///android_asset/" + textId + ".html");
         return currentView;
