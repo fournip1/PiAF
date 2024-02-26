@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     public final static String OTHER_FRAGMENTS_TAG = "other";
     //
     public final static String CARD_FRAGMENTS_TAG = "bird";
+    public final static String PRIVACY_FRAGMENTS_TAG = "privacy";
+
 
 
     //
@@ -167,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager
                 .beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.fragmentContainerView, fragment,OTHER_FRAGMENTS_TAG)
+                .replace(R.id.fragmentContainerView, fragment,PRIVACY_FRAGMENTS_TAG)
                 .addToBackStack(BACK_STACK_WELCOME_TAG)
                 .commit();
     }
@@ -216,14 +218,24 @@ public class MainActivity extends AppCompatActivity {
             // I'm viewing Fragment C
             fragmentManager.popBackStack(BACK_STACK_CARD_TAG,
                     fragmentManager.POP_BACK_STACK_INCLUSIVE);
-        } else if (fragmentManager.findFragmentByTag(OTHER_FRAGMENTS_TAG) != null) {
+        }  else if (fragmentManager.findFragmentByTag(OTHER_FRAGMENTS_TAG) != null) {
             // I'm viewing Fragment C
             fragmentManager.popBackStack(BACK_STACK_WELCOME_TAG,
                     fragmentManager.POP_BACK_STACK_INCLUSIVE);
 
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             getSupportActionBar().setDisplayShowHomeEnabled(false);
-         } else {
+         } else if (fragmentManager.findFragmentByTag(PRIVACY_FRAGMENTS_TAG) != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            ShowTextFragment fragment = ShowTextFragment.newInstance("about");
+            fragmentManager
+                    .beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.fragmentContainerView, fragment,OTHER_FRAGMENTS_TAG)
+                    .addToBackStack(BACK_STACK_WELCOME_TAG)
+                    .commit();
+        } else {
             super.onBackPressed();
          }
     }
