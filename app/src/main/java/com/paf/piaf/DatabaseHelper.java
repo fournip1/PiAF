@@ -270,7 +270,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
                 .collect(Collectors.toList());
 
         if (!bird.getAudioDescriptionPath().equals("")) {
-            Sound descSound = new Sound(Bird.DESCRIPTION_NAME,bird.getAudioDescriptionPath(),level,bird);
+            Sound descSound = new Sound(Bird.DESCRIPTION_NAME,bird.getAudioDescriptionPath(),level,bird,Sound.DEFAULT_CREDIT);
             sounds.add(0,descSound);
         }
         return sounds;
