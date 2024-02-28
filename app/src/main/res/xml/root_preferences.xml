@@ -36,6 +36,13 @@
             app:summaryOff="@string/warning_off"
             app:summaryOn="@string/warning_on"
             app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            app:key="hints"
+            app:title="@string/hint"
+            app:summaryOff="@string/warning_off"
+            app:summaryOn="@string/warning_on"
+            app:useSimpleSummaryProvider="true" />
 </PreferenceScreen>
 
 <!--    <PreferenceCategory app:title="@string/sync_header">

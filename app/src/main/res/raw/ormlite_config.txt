@@ -1,5 +1,5 @@
 #
-# generated on 2024/02/15 05:47:13
+# generated on 2024/02/28 08:56:27
 #
 # --table-start--
 dataClass=com.paf.piaf.Bird
@@ -129,18 +129,23 @@ columnName=first
 canBeNull=false
 # --field-end--
 # --field-start--
-fieldName=finished
+fieldName=QCM
 columnName=qcm
 canBeNull=false
 # --field-end--
 # --field-start--
-fieldName=warning
+fieldName=finished
 columnName=finished
 canBeNull=false
 # --field-end--
 # --field-start--
-fieldName=QCM
+fieldName=warning
 columnName=warning
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=hint
+columnName=hint
 canBeNull=false
 # --field-end--
 # --field-start--
@@ -194,6 +199,32 @@ canBeNull=false
 # --field-start--
 fieldName=sounds
 foreignCollection=true
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.paf.piaf.Hint
+tableName=hints
+# --table-fields-start--
+# --field-start--
+fieldName=id
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=hint
+columnName=hint
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=fragmentName
+columnName=fragment
+canBeNull=false
+# --field-end--
+# --field-start--
+fieldName=show
+columnName=show
+canBeNull=false
 # --field-end--
 # --table-fields-end--
 # --table-end--

@@ -2,6 +2,7 @@ package com.paf.piaf;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +43,6 @@ public class AnswersFragment extends Fragment {
      * @param answsersDepth defines how many scores we should take.
      * @return A new instance of fragment AswersFragment.
      */
-
     public static AnswersFragment newInstance(int answsersDepth) {
         AnswersFragment fragment = new AnswersFragment();
         Bundle args = new Bundle();
@@ -92,6 +92,13 @@ public class AnswersFragment extends Fragment {
         });
 
         initializeAnswers();
+
+        String className = this.getClass().getName();
+        if (dBHelper.hasHints(className) && dBHelper.getUserRuntimeDao().queryForFirst().isHint()) {
+            HintMessageFragment hintMessageFragment = HintMessageFragment.newInstance(className);
+            hintMessageFragment.show(((MainActivity) getActivity()).getSupportFragmentManager(),null);
+        }
+
         return currentView;
     }
 
@@ -109,18 +116,18 @@ public class AnswersFragment extends Fragment {
 
     private String getScoreSentence(long g) {
         StringBuilder sentence = new StringBuilder();
-        if ((float) g/answersDepth>0.8) {
+        if ((float) g/answersDepth>=0.9) {
             sentence.append(getString(R.string.great_score_text));
-        } else if ((float) g/answersDepth>0.6) {
+        } else if ((float) g/answersDepth>=0.8) {
             sentence.append(getString(R.string.good_score_text));
         } else {
             sentence.append(getString(R.string.normal_score_text));
         }
-        sentence.append(" ");
-        sentence.append(g);
-        sentence.append("/");
-        sentence.append(answersDepth);
-
+        sentence.append(" ")
+                .append(g)
+                .append("/")
+                .append(answersDepth)
+                .append(".");
         return sentence.toString();
         // return getString(R.string.score_text) + " " + String.valueOf(g) +"/" + String.valueOf(answersDepth);
     }

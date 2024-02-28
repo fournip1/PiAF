@@ -20,6 +20,7 @@ public class WarningFragment extends DialogFragment {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),R.style.PafDialog);
         builder.setMessage(R.string.dialog_warning)
+                .setTitle(R.string.warning_label)
                 .setPositiveButton(R.string.all_right, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         //

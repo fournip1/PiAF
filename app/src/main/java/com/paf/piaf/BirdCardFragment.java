@@ -109,6 +109,12 @@ public class BirdCardFragment extends Fragment {
             }
         });
 
+        String className = this.getClass().getName();
+        if (dBHelper.hasHints(className) && dBHelper.getUserRuntimeDao().queryForFirst().isHint()) {
+            HintMessageFragment hintMessageFragment = HintMessageFragment.newInstance(className);
+            hintMessageFragment.show(((MainActivity) getActivity()).getSupportFragmentManager(),null);
+        }
+
         return currentView;
     }
 
