@@ -1,6 +1,7 @@
 package com.paf.piaf;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,13 @@ public class WelcomeFragment extends Fragment {
         });
         
         updateTextAndImage();
+
+        String className = this.getClass().getName();
+        if (dBHelper.hasHints(className) && user.isHint()) {
+            HintMessageFragment hintMessageFragment = HintMessageFragment.newInstance(className);
+            hintMessageFragment.show(((MainActivity) getActivity()).getSupportFragmentManager(),null);
+        }
+
         return currentView;
     }
 

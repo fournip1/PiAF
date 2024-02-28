@@ -112,6 +112,13 @@ public class FreeFragment extends Fragment {
 
         idQuestion = 1;
         initializeQuizz();
+
+        String className = this.getClass().getName();
+        if (dBHelper.hasHints(className) && user.isHint()) {
+            HintMessageFragment hintMessageFragment = HintMessageFragment.newInstance(className);
+            hintMessageFragment.show(((MainActivity) getActivity()).getSupportFragmentManager(),null);
+        }
+
         return currentView;
     }
 
@@ -146,9 +153,6 @@ public class FreeFragment extends Fragment {
             }
             showButton.setVisibility(View.GONE);
             replayButton.setVisibility(View.GONE);
-            if (idQuestion == 2) {
-                Toast.makeText(getActivity(), getString(R.string.answer_explanation), Toast.LENGTH_LONG).show();
-            }
             answerShown = true;
         }
     }

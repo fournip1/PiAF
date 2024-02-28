@@ -34,7 +34,6 @@
     <string name="button_show">Voir la réponse.</string>
     <string name="answer_correct">Je le savais!</string>
     <string name="answer_incorrect">Je ne le savais pas.</string>
-    <string name="answer_explanation">A droite: je le savais.\nA gauche: je ne le savais pas.</string>
     <string name="normal_score_text">Votre score:</string>
     <string name="great_score_text">Excellent! Vous avez </string>
     <string name="good_score_text">Bien joué! Vous avez </string>
@@ -48,4 +47,8 @@
     <string name="warning">Avertissement pour le QCM?</string>
     <string name="warning_on">Afficher</string>
     <string name="warning_off">Ne pas afficher</string>
+    <string name="hint">Proposer des conseils?</string>
+    <string name="hint_label">Astuce:</string>
+    <string name="warning_label">Avertissement:</string>
+
 </resources>

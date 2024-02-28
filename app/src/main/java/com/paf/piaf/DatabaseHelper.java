@@ -17,9 +17,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,19 +34,24 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
     // any time you make changes to your database objects, you may have to increase the database version
     private static final int DATABASE_VERSION = 2;
 
-    // the DAO object we use to access the SimpleData table
+    // this argument is used to make random computation
+    private final Random rand;
 
+    // the DAO object we use to access the SimpleData table
     private RuntimeExceptionDao<Level, Integer> levelRuntimeDao = null;
     private RuntimeExceptionDao<Sound, Integer> soundRuntimeDao = null;
     private RuntimeExceptionDao<Score, Long> scoreRuntimeDao = null;
     private RuntimeExceptionDao<User, Integer> userRuntimeDao = null;
     private RuntimeExceptionDao<Bird, Integer> birdRuntimeDao = null;
+    private RuntimeExceptionDao<Hint, Integer> hintRuntimeDao = null;
+
 
     private Context mContext;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
         mContext = context;
+        rand = new Random();
     }
 
     /**
@@ -57,31 +62,33 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
         try {
             // Log.i(DatabaseHelper.class.getName(), "onCreate");
-            TableUtils.createTableIfNotExists(connectionSource, Bird.class);
-            TableUtils.createTableIfNotExists(connectionSource, Sound.class);
             TableUtils.createTableIfNotExists(connectionSource, Score.class);
             TableUtils.createTableIfNotExists(connectionSource, User.class);
-            TableUtils.createTableIfNotExists(connectionSource, Level.class);
-            // Log.i(DatabaseHelper.class.getName(),"Database created.");
+            Log.i(DatabaseHelper.class.getName(), "Database created.");
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
             throw new RuntimeException(e);
         }
 
-        populateBirdsSoundsLevels();
+        populateBirdsSoundsLevelsHints();
 
         // here we create the default app user
         Level level = getLevelRuntimeDao().queryForFirst();
-        User user = new User(true,false,true, true, level, 10, 4);
+        User user = new User(true, false, true, true, true, level, 10, 4);
         getUserRuntimeDao().create(user);
     }
 
-    public void populateBirdsSoundsLevels() {
+    public void populateBirdsSoundsLevelsHints() {
         // we set the user DAO
         RuntimeExceptionDao<User, Integer> userDao = getUserRuntimeDao();
 
         // now we populate the level table
         try {
+            TableUtils.createTableIfNotExists(connectionSource, Bird.class);
+            TableUtils.createTableIfNotExists(connectionSource, Sound.class);
+            TableUtils.createTableIfNotExists(connectionSource, Level.class);
+            TableUtils.createTableIfNotExists(connectionSource, Hint.class);
+
             InputStream inputStream = mContext.getResources().openRawResource(R.raw.populate_levels);
             DataInputStream dataInputStream = new DataInputStream(inputStream);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(dataInputStream));
@@ -112,7 +119,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
             e.printStackTrace();
         }
 
-        // last we populate the sound table
+        // then we populate the sound table
         try {
             InputStream inputStream = mContext.getResources().openRawResource(R.raw.populate_sounds);
             DataInputStream dataInputStream = new DataInputStream(inputStream);
@@ -125,6 +132,23 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
             // Log.i(this.getClass().getName(), "Sounds insertion went right");
         } catch (Exception e) {
             Log.e(this.getClass().getName(), "Sounds insertion went wrong");
+            e.printStackTrace();
+        }
+
+        // TODO: modify the preferences accordingly, add the random hint when running the app
+        // finally we populate the hints table
+        try {
+            InputStream inputStream = mContext.getResources().openRawResource(R.raw.populate_hints);
+            DataInputStream dataInputStream = new DataInputStream(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(dataInputStream));
+            String strLine;
+            while ((strLine = bufferedReader.readLine()) != null) {
+                userDao.updateRaw(strLine);
+            }
+            dataInputStream.close();
+            // Log.i(this.getClass().getName(), "Sounds insertion went right");
+        } catch (Exception e) {
+            Log.e(this.getClass().getName(), "Hints insertion went wrong");
             e.printStackTrace();
         }
     }
@@ -141,12 +165,16 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
             TableUtils.dropTable(connectionSource, Bird.class, true);
             TableUtils.dropTable(connectionSource, Sound.class, true);
             TableUtils.dropTable(connectionSource, Level.class, true);
+            TableUtils.dropTable(connectionSource, Hint.class, true);
 
-            if (oldVersion<2) {
+            if (oldVersion < 2) {
+                Log.i(DatabaseHelper.class.getName(), "Altering columns");
                 getScoreRuntimeDao().executeRaw("ALTER TABLE `user` ADD COLUMN finished SMALLINT NOT NULL DEFAULT 0;");
+                getScoreRuntimeDao().executeRaw("ALTER TABLE `user` ADD COLUMN first SMALLINT NOT NULL DEFAULT 1;");
                 getScoreRuntimeDao().executeRaw("ALTER TABLE `user` ADD COLUMN warning SMALLINT NOT NULL DEFAULT 1;");
+                getScoreRuntimeDao().executeRaw("ALTER TABLE `user` ADD COLUMN hint SMALLINT NOT NULL DEFAULT 1;");
             }
-            populateBirdsSoundsLevels();
+            populateBirdsSoundsLevelsHints();
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Can't update database", e);
             throw new RuntimeException(e);
@@ -194,18 +222,25 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         return birdRuntimeDao;
     }
 
+    public RuntimeExceptionDao<Hint, Integer> getHintRuntimeDao() {
+        if (hintRuntimeDao == null) {
+            hintRuntimeDao = getRuntimeExceptionDao(Hint.class);
+        }
+        return hintRuntimeDao;
+    }
+
     public float getTargetVicinity() {
-        Float fMaxErrors = (Score.SCORES_DEPTH*(100-Score.VALIDATION_PERCENTAGE)/100);
+        Float fMaxErrors = (Score.SCORES_DEPTH * (100 - Score.VALIDATION_PERCENTAGE) / 100);
         Long maxErrors = fMaxErrors.longValue();
         Long lastValidationTimestamp = getUserRuntimeDao().queryForFirst().getLastValidationTimestamp();
         // Log.i(DatabaseHelper.class.getName(),"Maximum erreurs: " + maxErrors);
-        int i=0;
-        int e=0;
+        int i = 0;
+        int e = 0;
         List<Score> lastScores = getLastScores(Score.SCORES_DEPTH).stream()
                 .filter((s) -> s.dateMillis > lastValidationTimestamp)
                 .collect(Collectors.toList());
-        while (e <= maxErrors && i<lastScores.size()) {
-            if (lastScores.get(i).getScore()!=1) {
+        while (e <= maxErrors && i < lastScores.size()) {
+            if (lastScores.get(i).getScore() != 1) {
                 e++;
             }
             // Log.i(DatabaseHelper.class.getName(),"valeur de i:" + i);
@@ -213,13 +248,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
             i++;
         }
 
-        return (float) (Score.SCORES_DEPTH+1-i)/Score.SCORES_DEPTH;
+        return (float) (Score.SCORES_DEPTH + 1 - i) / Score.SCORES_DEPTH;
     }
 
     public List<Bird> getBirds() {
         Level level = getUserRuntimeDao().queryForFirst().getLevel();
         Set<Bird> hBirds = getSoundRuntimeDao().queryForAll().stream()
-                .filter((s)->(s.getLevel().getId() <= level.getId()))
+                .filter((s) -> (s.getLevel().getId() <= level.getId()))
                 .map(Sound::getBird)
                 .collect(Collectors.toSet());
         return hBirds.stream()
@@ -259,7 +294,37 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         }
         return lastScores;
     }
-    
+
+
+    public Hint getRandomHintByFragment(String fragmentName) {
+        Hint hint = null;
+        List<Hint> hints = getHintsByFragment(fragmentName);
+        if (!hints.isEmpty()) {
+            hint = hints.get(rand.nextInt(hints.size()));
+        }
+        return hint;
+    }
+
+    public List<Hint> getHintsByFragment(String fragmentName) {
+        List<Hint> hints = getHintRuntimeDao().queryForAll().stream()
+                .filter((h) -> (h.getFragmentName().equals(fragmentName) && h.isShow()))
+                .collect(Collectors.toList());
+        return hints;
+    }
+
+    public boolean hasHints(String fragmentName) {
+        return !getHintsByFragment(fragmentName).isEmpty();
+    }
+
+    public void resetAllHints() {
+        RuntimeExceptionDao<Hint, Integer> hintRuntimeExceptionDao = getHintRuntimeDao();
+        getHintRuntimeDao().queryForAll().stream()
+                .forEach(h -> {
+                    h.setShow(true);
+                    hintRuntimeExceptionDao.update(h);
+                });
+    }
+
     public List<Sound> getSoundsByBirdAndLevel(int birdId, int levelId) {
         Bird bird = getBirdRuntimeDao().queryForId(birdId);
         Level level = getLevelRuntimeDao().queryForId(levelId);
@@ -270,12 +335,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
                 .collect(Collectors.toList());
 
         if (!bird.getAudioDescriptionPath().equals("")) {
-            Sound descSound = new Sound(Bird.DESCRIPTION_NAME,bird.getAudioDescriptionPath(),level,bird,Sound.DEFAULT_CREDIT);
-            sounds.add(0,descSound);
+            Sound descSound = new Sound(Bird.DESCRIPTION_NAME, bird.getAudioDescriptionPath(), level, bird, Sound.DEFAULT_CREDIT);
+            sounds.add(0, descSound);
         }
         return sounds;
     }
-    
+
     public List<Sound> getSoundsByLevel(Level level) {
         int levelId = level.getId();
         List<Sound> sounds = new ArrayList<>();
@@ -313,6 +378,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         scoreRuntimeDao = null;
         userRuntimeDao = null;
         birdRuntimeDao = null;
+        hintRuntimeDao = null;
         // Log.i(DatabaseHelper.class.getName(),"Closing database.");
         super.close();
     }

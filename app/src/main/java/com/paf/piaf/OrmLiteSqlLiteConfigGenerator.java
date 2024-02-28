@@ -8,7 +8,7 @@ Careful to set the working project directory to main (got to run -> edit configu
 */
 
 public class OrmLiteSqlLiteConfigGenerator extends OrmLiteConfigUtil {
-    private final static Class<?>[] entityClasses=new Class[]{Bird.class, Sound.class, Score.class, User.class, Level.class};
+    private final static Class<?>[] entityClasses=new Class[]{Bird.class, Sound.class, Score.class, User.class, Level.class, Hint.class};
     public static void main(String... args) throws Exception{
         writeConfigFile("ormlite_config.txt",entityClasses);
     }

@@ -100,6 +100,13 @@ public class QCMFragment extends Fragment {
 
         idQuestion = 1;
         initializeQuizz();
+
+        String className = this.getClass().getName();
+        if (dBHelper.hasHints(className) && user.isHint()) {
+            HintMessageFragment hintMessageFragment = HintMessageFragment.newInstance(className);
+            hintMessageFragment.show(((MainActivity) getActivity()).getSupportFragmentManager(),null);
+        }
+
         return currentView;
     }
 

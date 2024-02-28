@@ -20,11 +20,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         // opening database and getting the user
         dBHelper = new DatabaseHelper(getActivity());
         userRuntimeExceptionDao = dBHelper.getUserRuntimeDao();
-        user = userRuntimeExceptionDao.queryForAll().get(0);
+        user = userRuntimeExceptionDao.queryForFirst();
 
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
         SwitchPreferenceCompat QCMPreference = findPreference("qcm_mode");
         SwitchPreferenceCompat warningPreference = findPreference("warning");
+        SwitchPreferenceCompat hintsPreference = findPreference("hints");
+
 
         ListPreference numberOfQuestions = findPreference("nb_questions");
         ListPreference numberOfChoices = findPreference("nb_choices");
@@ -32,8 +34,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         // we first set the value from the user's value
         QCMPreference.setChecked(user.isQCM());
         warningPreference.setChecked(user.isWarning());
+        hintsPreference.setChecked(user.isHint());
         numberOfQuestions.setValue(String.valueOf(user.getNbQuestions()));
         numberOfChoices.setValue(String.valueOf(user.getNbChoices()));
+
 
         QCMPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -52,6 +56,22 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                               Object newValue) {
                 // Log.i(SettingsFragment.class.getName(),"QCM chosen: "+ newValue);
                 user.setWarning((boolean) newValue);
+                userRuntimeExceptionDao.update(user);
+                return true;
+            }
+        });
+
+        hintsPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                // Log.i(SettingsFragment.class.getName(),"QCM chosen: "+ newValue);
+                boolean showHint = (boolean) newValue;
+                // we update all the hints case true
+                if (showHint) {
+                    dBHelper.resetAllHints();
+                }
+                user.setHint(showHint);
                 userRuntimeExceptionDao.update(user);
                 return true;
             }
