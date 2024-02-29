@@ -162,15 +162,17 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
         try {
             // we want the user and the scores to be kept
             Log.i(DatabaseHelper.class.getName(), "Upgrading database");
-            TableUtils.dropTable(connectionSource, Bird.class, true);
-            TableUtils.dropTable(connectionSource, Sound.class, true);
-            TableUtils.dropTable(connectionSource, Level.class, true);
-            TableUtils.dropTable(connectionSource, Hint.class, true);
-
-            if (oldVersion < 2) {
+            if (oldVersion >= 2) {
+                TableUtils.dropTable(connectionSource, Bird.class, true);
+                TableUtils.dropTable(connectionSource, Sound.class, true);
+                TableUtils.dropTable(connectionSource, Level.class, true);
+                TableUtils.dropTable(connectionSource, Hint.class, true);
+            } else {
+                TableUtils.dropTable(connectionSource, Bird.class, true);
+                TableUtils.dropTable(connectionSource, Sound.class, true);
+                TableUtils.dropTable(connectionSource, Level.class, true);
                 Log.i(DatabaseHelper.class.getName(), "Altering columns");
                 getScoreRuntimeDao().executeRaw("ALTER TABLE `user` ADD COLUMN finished SMALLINT NOT NULL DEFAULT 0;");
-                getScoreRuntimeDao().executeRaw("ALTER TABLE `user` ADD COLUMN first SMALLINT NOT NULL DEFAULT 1;");
                 getScoreRuntimeDao().executeRaw("ALTER TABLE `user` ADD COLUMN warning SMALLINT NOT NULL DEFAULT 1;");
                 getScoreRuntimeDao().executeRaw("ALTER TABLE `user` ADD COLUMN hint SMALLINT NOT NULL DEFAULT 1;");
             }
