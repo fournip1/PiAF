@@ -20,12 +20,12 @@
     <string name="qcm_mode">Jouer en mode QCM?</string>
     <string name="qcm_mode_on">QCM activé</string>
     <string name="qcm_mode_off">Mode libre activé.</string>
-    <string name="level_information">Vous êtes au niveau </string>
+    <string name="level_information">Niveau </string>
     <string name="target_information_1">Plus que </string>
     <string name="target_information_2"> bonnes réponses avant validation.</string>
-    <string name="target_close">Vous êtes chaud.</string>
-    <string name="target_mid">Vous êtes tiède.</string>
-    <string name="target_far">Vous êtes froid.</string>
+    <string name="target_close">Tout près de la validation.</string>
+    <string name="target_mid">Proche de la validation.</string>
+    <string name="target_far">Encore loin de la validation.</string>
     <string name="target_reached">Vous avez fini le jeu!</string>
     <string name="level_validation">Bravo! Vous avez validé le niveau</string>
     <string name="game_won">Victoire, vous avez achevé le jeu!</string>
@@ -50,5 +50,4 @@
     <string name="hint">Proposer des conseils?</string>
     <string name="hint_label">Astuce:</string>
     <string name="warning_label">Avertissement:</string>
-
 </resources>

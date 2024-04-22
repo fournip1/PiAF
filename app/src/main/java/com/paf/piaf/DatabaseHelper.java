@@ -23,16 +23,24 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
+
 /**
  * Database helper class used to manage the creation and upgrading of your database. This class also usually provides
  * the DAOs used by the other classes. It implements seriazable because it is needed to pass this between actvities
+ * Release notes:
+ * version 1 -> 2:
+ *              - modifying user table, adding fields finished, warning, hint
+ *              - adding hint table
+ * version 2 -> 3:
+ *              - adding several birds' explanations and hints.
  */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializable {
 
     // name of the database file for your application -- change to something appropriate for your app
     private static final String DATABASE_NAME = "piaf.db";
     // any time you make changes to your database objects, you may have to increase the database version
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // this argument is used to make random computation
     private final Random rand;
@@ -74,7 +82,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
 
         // here we create the default app user
         Level level = getLevelRuntimeDao().queryForFirst();
-        User user = new User(true, false, true, true, true, level, 10, 4);
+        User user = new User(true, false, true, true, true, level, 5, 4);
         getUserRuntimeDao().create(user);
     }
 
@@ -325,6 +333,19 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements Serializa
                     h.setShow(true);
                     hintRuntimeExceptionDao.update(h);
                 });
+    }
+
+    public void updateShowHintsParameter() {
+        List<Hint> hints = getHintRuntimeDao().queryForAll().stream()
+                .filter((h) -> (h.isShow()))
+                .collect(Collectors.toList());
+
+        if (hints.isEmpty()) {
+            RuntimeExceptionDao<User, Integer> userRunTimeDao = getUserRuntimeDao();
+            User user = userRunTimeDao.queryForFirst();
+            user.setHint(false);
+            userRunTimeDao.update(user);
+        }
     }
 
     public List<Sound> getSoundsByBirdAndLevel(int birdId, int levelId) {

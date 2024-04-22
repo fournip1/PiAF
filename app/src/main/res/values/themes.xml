@@ -4,6 +4,7 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="materialButtonStyle">@style/PafButton</item>
+        <item name="preferenceScreenStyle">@style/PafPreferences</item>
         <item name="android:statusBarColor">@color/paf_secondary</item>
         <item name="android:textColorPrimary">@color/paf_white</item>
         <item name="android:textColorSecondary">@color/paf_white</item>
@@ -44,9 +45,9 @@
 
     <style name="Theme.PiAF" parent="Base.Theme.PiAF" />
 
-    <style name="ThemeOverlay.PiAF.FullscreenContainer" parent="">
+<!--    <style name="ThemeOverlay.PiAF.FullscreenContainer" parent="">
         <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
         <item name="fullscreenTextColor">@color/light_blue_A200</item>
-    </style>
+    </style>-->
 
 </resources>

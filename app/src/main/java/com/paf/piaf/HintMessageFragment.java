@@ -65,6 +65,7 @@ public class HintMessageFragment extends DialogFragment {
                         // Let's update user's preferences
                         hint.setShow(false);
                         dBHelper.getHintRuntimeDao().update(hint);
+                        dBHelper.updateShowHintsParameter();
                     }
                 });
         // Create the AlertDialog object and return it
