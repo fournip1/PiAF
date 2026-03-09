@@ -4,8 +4,6 @@ English description of the code below.
 Vous pouvez lire ce [petit descriptif](/app/src/main/assets/about.html).
 ## Prochaines étapes
 Voilà quelques fonctionnalités qui vont être ajoutées dans les prochaines versions:
-* associer un contenu audio descriptif d'une vingtaine de secondes à certains oiseau.
-* créer un catalogue des sons consultables classés par oiseau.
 * associer à chaque oiseaux des milieux de prédilection:
     * prairie
     * sous-bois
@@ -84,6 +82,10 @@ The fragment used to play the game in free mode.
 The fragment used to play the game in QCM mode.
 #### Answers Fragment
 The fragment used to show the score and the answers when completing the game.
+#### Birds Scrolling Fragment
+The fragment used to display the birds' catalog.
+#### Birds Card Fragment
+The fragment used to display the birds' individual card.
 ### Resources
 #### html pages
 The *about*, *credits* and *licence* pages are written in html and stored in the assets [assets folder](/app/src/main/assets).
