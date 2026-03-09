@@ -19,7 +19,7 @@ Voilà quelques fonctionnalités qui vont être ajoutées dans les prochaines ve
     * friches, buissons
     * pelouses
 ## Installer le jeu
-Vous pourrez prochainement trouver le jeu sur le Google Store. Patience...
+Vous pouvez installer la dernière version du jeu en suivant sur [mon serveur](https://dalida.hopto.org/sorties/android/app-release-11.aab)
 ## Prochaines étapes
 ## Pour les développeurs
 This game was developped in Java for Android. I used an sqlite database with ORMlite. The sound resources are not available on GitHub because they are protected by a specific licence.
